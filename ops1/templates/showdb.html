@@ -1,0 +1,210 @@
+<html>
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+    <script src="/static/jquery/jquery-1.12.3.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src={% static "js/bootstrap.js" %}></script>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <script type="text/javascript">
+  // 删除危险操作提示:
+  function show_confirm()
+  {
+  var r=confirm("确定要删除吗?!");
+  if (r==true)
+    {
+    }
+  else
+    {
+    window.event.returnValue = false;
+    }
+  }
+  
+  function disable_input(inid)
+  {
+  	insid = "ins_id" + inid
+  	selid = "sel_type" + inid
+  	//alert(insid + " " + selid)
+  	var ins = document.getElementById(insid);
+  	var sel = document.getElementById(selid);
+  	var opt=sel.selectedIndex
+  	if(opt == 2)
+  	{
+  		ins.disabled = true;
+  	}
+  	else
+  	{
+  		ins.disabled = false;
+  	}
+  }
+  </script>
+</head>
+
+<body>
+<div id="dt2" align="center">
+<table class="table table-striped table-hover table-condensed table-bordered">
+
+<!-- 表头 -->
+<tr>
+  <th>删</th>
+  <th>实例</th>
+  <th>项目</th>
+  <th>地区</th>
+  <th>状态</th>
+  <th>内网IP</th>
+  <th>配置</th>
+  <th>端口</th>
+  <th>数据库类型</th>
+  <th>使用次数</th>
+  <th>录入时间</th>
+  <th>更新时间</th>
+  <th>Submit</th>
+</tr>
+
+<!-- 主体: -->
+{% for i in db_all_data %}
+    <tr>
+	<form action="/rvs/" method="POST">
+    {% if priv == 3 %}
+	<td><input onclick="show_confirm()" formtarget="_self" type="submit" value="X" style="color:red;"/></td>
+    {% else %}
+    <td><input onclick="show_confirm()" formtarget="_self" type="submit" value="X" style="color:red;" disabled/></td>
+    {% endif %}
+	<input name="table" type="hidden" value="dbserver"/>
+	<input name="action" type="hidden" value="delete"/>
+	<input name="id" type="hidden" value="{{ i.id }}"/>
+	</form>
+    <form id="{{ i.instance_id }}" action="/rvs/" method="POST" name="rvsinstance">
+    <input name="ins_id_bak" type="hidden" value="{{ i.instance_id }}" />
+	{% if i.db_type == "redis" %}
+    <td><input id="ins_id{{ i.instance_id }}" name="instance_id" type="text" value="{{ i.instance_id }}" style="width:150px;border-style:none"  readonly/></td>
+	{% else %}
+    <td><input id="ins_id{{ i.instance_id }}" name="instance_id" type="text" value="{{ i.instance_id }}" style="width:150px;border-style:none" /></td>
+	{% endif %}
+    {% if user.username == 'root' %}
+    <td><input name="project" type="text" value="{{ i.project }}" style="width:40px;border-style:none" /></td>
+    {% else %}
+    <td><input name="project" type="text" value="{{ i.project }}" style="width:40px;border-style:none" readonly/></td>
+    {% endif %}
+    <td><input name="location" type="text" value="{{ i.location }}" style="width:80px;border-style:none" /></td>
+    <td>
+    <select name="status">
+    {% if i.status == 'on use' %}
+      <option value="on use" selected="true">on use</option>
+	{% else %}
+      <option value="on use">on use</option>
+	{% endif %}
+	{% if i.status == 'not on use' %}
+      <option value="not on use" selected="true">not on use</option>
+	{% else %}
+      <option value="not on use">not on use</option>
+	{% endif %}
+    </select>
+    </td>
+    <td><input name="inter_ip" type="text" value="{{ i.inter_ip }}" style="width:120px;border-style:none" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"/></td>
+    <td><input name="hardware_info" type="text" value="{{ i.hardware_info }}" style="width:150px;border-style:none" /></td>
+    <td><input name="port" type="text" value="{{ i.port }}" style="width:40px;border-style:none" pattern="[0-9]{4,}"/></td>
+    <td>
+    <select id="sel_type{{ i.instance_id }}" name="db_type" onchange='disable_input("{{ i.instance_id }}")'>
+    {% if i.db_type == 'mysql5.5' %}
+      <option value="mysql5.5" selected="true">mysql5.5</option>
+	{% else %}
+      <option value="mysql5.5">mysql5.5</option>
+	{% endif %}
+	{% if i.db_type == 'mongodb3.0' %}
+      <option value="mongodb3.0" selected="true">mongodb3.0</option>
+	{% else %}
+      <option value="mongodb3.0">mongodb3.0</option>
+	{% endif %}
+	{% if i.db_type == 'redis' %}
+      <option value="redis" selected="true">redis</option>
+	{% else %}
+      <option value="redis">redis</option>
+	{% endif %}
+    </select>
+    </td>
+    <td><input name="used_times" type="text" value="{{ i.used_times }}" style="width:50px;border-style:none" readonly="True"/></td>
+    <td><input name="enter_time" type="text" value="{{ i.enter_time|date:'Y-m-d' }}" style="width:100px;border-style:none" readonly="True"/></td>
+    <td><input name="update_time" type="text" value="{{ i.update_time|date:'Y-m-d' }}" style="width:100px;border-style:none" readonly="True"/></td>
+    <input name="pagen" type="hidden" value="{{ db_all_data.number }}" />
+    <input name="pagel" type="hidden" value="{{ db_all_data.paginator.num_pages }}" />
+	<input name="table" type="hidden" value="dbserver"/>
+	<input name="action" type="hidden" value="update"/>
+	<input name="id" type="hidden" value="{{ i.id }}"/>
+    {% if priv == 3 %}
+    <td><input type="submit" /></td>
+    {% else %}
+    <td><input type="submit" disabled/></td>
+    {% endif %}
+    </form>
+    </tr>
+{% endfor %}
+</table>
+<div>
+  <div align="left">
+	<pre>注意：修改”实例“可以用于添加新纪录，如果修改后的”实例“与原有的”实例“冲突，原有的”实例“将被覆盖！</pre>
+  </div>
+  <div id="addform" align="left">
+    {% if priv == 3 %}
+	<a href="/addform/"><input class="btn btn-default" type="button" value="添加记录"/></a>
+    {% else %}
+    <a><input class="btn btn-default" type="button" value="添加记录" disabled/></a>
+    {% endif %}
+  </div>
+</div>
+</div>
+<br/>
+<div>
+  <div id="search">
+<!-- 搜索: -->
+	<form name="ss_db" action="/rvs/" method='POST'>
+    <div style="float:left;width:100px;">
+	  <select class="form-control" name="ss_key">
+	  	<option value="instance_id">实例</option>
+	  	<option value="project">项目</option>
+	  	<option value="location">地区</option>
+	  	<option value="status">状态</option>
+	  	<option value="inter_ip">内网IP</option>
+	  	<option value="hardware_info">配置</option>
+	  	<option value="port">端口</option>
+	  	<option value="db_type">数据库类型</option>
+	  	<option value="used_times">使用次数</option>
+	  	<option value="enter_time">录入时间</option>
+	  	<option value="update_time">更新时间</option>
+	  </select>
+    </div>
+    <div style="float:left;width:200px;margin-right: 10px;">
+	  <input class="form-control" name="ss_word" type="text"/>
+    </div>
+    <div style="float:left;width:100px;">
+	  <input class="btn btn-default" type="submit" value="搜索"/>
+    </div>
+	<input name="table" type="hidden" value="dbserver"/>
+	<input name="action" type="hidden" value="search"/>
+	</form>
+  </div>
+<!-- 分页: -->
+  <div class="div_right" id="pageview" align="right">
+    {% if db_all_data.has_previous %}
+        <a href="?page={{ db_all_data.previous_page_number }}&s_instance_id={{ s_instance_id }}&s_project={{ s_project }}&s_location={{ s_location }}&s_status={{ s_status }}&s_inter_ip={{ s_inter_ip }}&s_hardware_info={{ s_hardware_info }}&s_port={{ s_port }}&s_db_type={{ s_db_type }}&s_enter_time={{ s_enter_time }}&s_update_time={{ s_update_time }}&ss_key={{ ss_key }}&ss_word={{ ss_word }}">前一页</a>
+    {% endif %}
+	
+        第{{ db_all_data.number }}页，共{{ db_all_data.paginator.num_pages }}页。
+
+    {% if db_all_data.has_next %}
+        <a href="?page={{ db_all_data.next_page_number }}&s_instance_id={{ s_instance_id }}&s_project={{ s_project }}&s_location={{ s_location }}&s_status={{ s_status }}&s_inter_ip={{ s_inter_ip }}&s_hardware_info={{ s_hardware_info }}&s_port={{ s_port }}&s_db_type={{ s_db_type }}&s_enter_time={{ s_enter_time }}&s_update_time={{ s_update_time }}&ss_key={{ ss_key }}&ss_word={{ ss_word }}">下一页</a>
+    {% endif %}
+  </div>
+</div>
+  <script type="text/javascript">
+  $(document).ready(function(){
+      $('#username',parent.document).html('{{ user.username }}');
+      $('#projname',parent.document).html('{{ proj }}');
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<html>
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+    <script src="/static/jquery/jquery-1.12.3.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src={% static "js/bootstrap.js" %}></script>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <script type="text/javascript">
+  // 删除提示:
+  function show_confirm()
+  {
+  var r=confirm("确定要删除吗?!");
+  if (r==true)
+    {}
+  else
+    {
+    window.event.returnValue = false;
+    }
+  }
+  </script>
+</head>
+<body>
+<!-- 表头 -->
+<div>
+<table class="table table-striped table-hover table-condensed table-bordered">
+<tr>
+  <th>删</th>
+  <th>UUID</th>
+  <th>项目</th>
+  <th>地区</th>
+  <th>状态</th>
+  <th>内网IP</th>
+  <th>外网IP</th>
+  <th>用途</th>
+  <th>CPU</th>
+  <th>内存G</th>
+  <th>硬盘G</th>
+  <th>操作系统</th>
+  <th>使用中</th>
+  <th>录入时间</th>
+  <th>更新时间</th>
+  <th>子网</th>
+  <th>Submit</th>
+</tr>
+<!-- 表格主体 -->
+{% for i in server_data %}
+    <tr>
+	<form action="/rvs/" method="POST">
+        {% if priv == 3 %}
+		  <td><input onclick="show_confirm()" formtarget="_self" type="submit" value="X" style="color:red;"/></td>
+        {% else %}
+          <td><input onclick="show_confirm()" formtarget="_self" type="submit" value="X" style="color:red;" disabled/></td>
+        {% endif %}
+		<input name="table" type="hidden" value="server"/>
+		<input name="action" type="hidden" value="delete"/>
+		<input name="id" type="hidden" value="{{ i.id }}"/>
+	</form>
+    <form id="{{ i.uuid }}" action="/rvs/" method="POST" name="rvsserver">
+		<td><input readonly form="{{ i.uuid }}" name="uuid" type="text" value="{{ i.uuid }}" style="width:80px;border-style:none" /></td>
+        {% if user.username == 'root' %}
+		<td><input name="project" type="text" value="{{ i.project }}" style="width:50px;border-style:none" /></td>
+        {% else %}
+		<td><input name="project" type="text" value="{{ i.project }}" style="width:50px;border-style:none" readonly/></td>
+        {% endif %}
+		<td><input name="location" type="text" value="{{ i.location }}" style="width:70px;border-style:none" /></td>
+		<td>
+		<select name="status">
+		{% if i.status == 'on use' %}
+		<option value="on use" selected="true">on use</option>
+		{% else %}
+		<option value="on use">on use</option>
+		{% endif %}
+		{% if i.status == 'not on use' %}
+		<option value="not on use" selected="true">not on use</option>
+		{% else %}
+		<option value="not on use">not on use</option>
+		{% endif %}
+		</select>
+		</td>
+		<td><input name="inter_ip" type="text" value="{{ i.inter_ip }}" style="width:120px;border-style:none" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" /></td>
+		<td><input name="exter_ip" type="text" value="{{ i.exter_ip }}" style="width:100px;border-style:none" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" /></td>
+		<td>
+		<select name="srv_type">
+		{% if i.srv_type == 'game server' %}
+		<option value="game server" selected="true">game server</option>
+		{% else %}
+		<option value="game server">game server</option>
+		{% endif %}
+		{% if i.srv_type == 'mysql server' %}
+		<option value="mysql server" selected="true">mysql server</option>
+		{% else %}
+		<option value="mysql server">mysql server</option>
+		{% endif %}
+		{% if i.srv_type == 'redis server' %}
+		<option value="redis server" selected="true">redis server</option>
+		{% else %}
+		<option value="redis server">redis server</option>
+		{% endif %}
+		{% if i.srv_type == 'N/A' %}
+		<option value="N/A" selected="true">N/A</option>
+		{% else %}
+		<option value="N/A">N/A</option>
+		{% endif %}
+		</select>
+		</td>
+		<td><input name="cpu" type="text" value="{{ i.cpu }}" style="width:40px;border-style:none" pattern="[0-9]{1,2}" /></td>
+		<td><input name="memory" type="text" value="{{ i.memory }}" style="width:40px;border-style:none" pattern="[0-9]{1,3}" /></td>
+		<td><input name="disk_size" type="text" value="{{ i.disk_size }}" style="width:40px;border-style:none" pattern="[0-9]{1,4}" /></td>
+		<td>
+		<select name="os_type">
+		{% if i.os_type == 'linux' %}
+		<option value="linux" selected="true">linux</option>
+		{% else %}
+		<option value="linux">linux</option>
+		{% endif %}
+		{% if i.os_type == 'windows' %}
+		<option value="windows" selected="true">windows</option>
+		{% else %}
+		<option value="windows">windows</option>
+		{% endif %}
+		</select>
+		</td>
+		<td><input name="used_times" type="text" value="{{ i.used_times }}" style="width:40px;border-style:none" readonly="True"/></td>
+		<td><input name="enter_time" type="text" value="{{ i.enter_time|date:'Y-m-d' }}" style="width:100px;border-style:none" readonly="True"/></td>
+		<td><input name="update_time" type="text" value="{{ i.update_time|date:'Y-m-d' }}" style="width:100px;border-style:none" readonly="True"/></td>
+		<td><input name="subnet" type="text" value="{{ i.subnet }}" style="width:40px;border-style:none" /></td>
+		<input name="pagen" type="hidden" value="{{ server_all_data.number }}" />
+		<input name="pagel" type="hidden" value="{{ server_all_data.paginator.num_pages }}" />
+		<input name="table" type="hidden" value="server"/>
+		<input name="action" type="hidden" value="update"/>
+		<input name="id" type="hidden" value="{{ i.id }}"/>
+        {% if priv == 3 %}
+		  <td><input type="submit"/></td>
+        {% else %}
+          <td><input type="submit" disabled/></td>
+        {% endif %}
+    </form>
+    </tr>
+{% endfor %}
+</table>
+<div>
+  <div>
+	<pre>注意：修改”UUID“可以用于添加新纪录，如果修改后的”UUID“与原有的”UUID“冲突，原有的”UUID“将被覆盖！</pre>
+  </div>
+  <div style="height:38px;">
+  {% if priv == 3 %}
+	<a href="/addform/"><button class="btn btn-default">添加记录</button></a>
+  {% else %}
+    <button class="btn btn-default" disabled>添加记录</button>
+  {% endif %}
+  </div>
+</div>
+</div>
+<div>
+  <div id="search">
+	<!-- 搜索: -->
+	<form name="ss_server" action="/rvs/" method='POST'>
+    <div style="float:left;width:100px;">
+	  <select class="form-control" name="ss_key" style="width:100px;">
+	  	<option value="uuid">UUID</option>
+	  	<option value="project">项目</option>
+	  	<option value="location">地区</option>
+	  	<option value="status">状态</option>
+	  	<option value="inter_ip">内网IP</option>
+	  	<option value="exter_ip">外网IP</option>
+	  	<option value="srv_type">服务器类型</option>
+	  	<option value="cpu">CPU</option>
+	  	<option value="memory">内存G</option>
+	  	<option value="disk_size">硬盘G</option>
+	  	<option value="os_type">操作系统</option>
+	  	<option value="used_times">使用次数</option>
+	  	<option value="enter_time">录入时间</option>
+	  	<option value="update_time">更新时间</option>
+	  	<option value="subnet">子网</option>
+	  </select>
+    </div>
+    <div style="float:left;width:200px;margin-right: 10px;">
+	  <input class="form-control" name="ss_word" type="text" style="width:200px;"/>
+    </div>
+    <div style="float:left;width:100px;">
+	  <input class="btn btn-default" type="submit" value="搜索"/>
+    </div>
+	  <input name="action" type="hidden" value="search"/>
+	  <input name="table" type="hidden" value="server"/>
+	</form>
+  </div>
+  <!-- 分页: -->
+  <div id="pageview" align="right">
+    {% if server_all_data.has_previous %}
+        <a href="?page={{ server_all_data.previous_page_number }}&s_uuid={{ s_uuid }}&s_project={{ s_project }}&s_location={{ s_location }}&s_status={{ s_status }}&s_inter_ip={{ s_inter_ip }}&s_exter_ip={{ s_exter_ip }}&s_cpu={{ s_cpu }}&s_memory={{ s_memory }}&s_disk_size={{ s_disk_size }}&s_os_type={{ s_os_type }}&s_enter_time={{ s_enter_time }}&s_update_time={{ s_update_time }}&s_subnet={{ s_subnet }}&ss_key={{ ss_key }}&ss_word={{ ss_word }}">前一页</a>
+    {% endif %}
+	
+        第{{ server_all_data.number }}页，共{{ server_all_data.paginator.num_pages }}页。
+
+    {% if server_all_data.has_next %}
+        <a href="?page={{ server_all_data.next_page_number }}&s_uuid={{ s_uuid }}&s_project={{ s_project }}&s_location={{ s_location }}&s_status={{ s_status }}&s_inter_ip={{ s_inter_ip }}&s_exter_ip={{ s_exter_ip }}&s_cpu={{ s_cpu }}&s_memory={{ s_memory }}&s_disk_size={{ s_disk_size }}&s_os_type={{ s_os_type }}&s_enter_time={{ s_enter_time }}&s_update_time={{ s_update_time }}&s_subnet={{ s_subnet }}&ss_key={{ ss_key }}&ss_word={{ ss_word }}">下一页</a>
+    {% endif %}
+  </div>
+</div>
+  <script type="text/javascript">
+  $(document).ready(function(){
+      $('#username',parent.document).html('{{ user.username }}');
+      $('#projname',parent.document).html('{{ proj }}');
+  });
+  </script>
+</body>
+</html>

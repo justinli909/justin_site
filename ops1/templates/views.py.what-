@@ -1,0 +1,337 @@
+#coding=utf-8
+# Create your views here.
+from django.http import HttpResponse
+from django.shortcuts import render, render_to_response, HttpResponseRedirect
+from ops1.models import server, dbserver, domain
+from django.core.paginator import Paginator
+import sys
+
+def showserver(request):
+    server_list = server.objects.all()
+#    server_col = ['uuid','project','location','status','inter_ip','exter_ip','cpu','memory','disk_size','os_type','enter_time','update_time','subnet']
+    server_all_data = []
+    for i in server_list:
+        server_data = []
+        server_id = server.objects.get(uuid=i)
+#        for j in server_col:
+#            server_data.append(server_id.j)
+        server_data.append(server_id.uuid)
+        server_data.append(server_id.project)
+        server_data.append(server_id.location)
+        server_data.append(server_id.status)
+        server_data.append(server_id.inter_ip)
+        server_data.append(server_id.exter_ip)
+        server_data.append(server_id.cpu)
+        server_data.append(server_id.memory)
+        server_data.append(server_id.disk_size)
+        server_data.append(server_id.os_type)
+        server_data.append(server_id.enter_time)
+        server_data.append(server_id.update_time)
+        server_data.append(server_id.subnet)
+        server_all_data.append(server_data)
+# Paginator 
+    paginator = Paginator(server_all_data, 25)
+    page = request.GET.get('page')
+    try:
+        server_p_data = paginator.page(page)
+    except:
+        server_p_data = paginator.page(1)
+    return render_to_response('showserver.html',{'server_all_data':server_p_data})
+
+def showdb(request):
+    db_list = dbserver.objects.all()
+    db_all_data = []
+    for i in db_list:
+        db_data = []
+        db_id = dbserver.objects.get(instance_id=i)
+        db_data.append(db_id.instance_id)
+        db_data.append(db_id.project)
+        db_data.append(db_id.location)
+        db_data.append(db_id.status)
+        db_data.append(db_id.inter_ip)
+        db_data.append(db_id.hardware_info)
+        db_data.append(db_id.port)
+        db_data.append(db_id.db_type)
+        db_data.append(db_id.enter_time)
+        db_data.append(db_id.update_time)
+        db_all_data.append(db_data)
+# Paginator 
+    paginator = Paginator(db_all_data, 25)
+    page = request.GET.get('page')
+    try:
+        db_p_data = paginator.page(page)
+    except:
+        db_p_data = paginator.page(1)
+    return render_to_response('showdb.html',{'db_all_data':db_p_data})
+
+def showdomain(request):
+    dm_list = domain.objects.all()
+    dm_all_data = []
+    for i in dm_list:
+        dm_data = []
+        dm_id = domain.objects.get(domain_name=i)
+        dm_data.append(dm_id.domain_name)
+        dm_data.append(dm_id.project)
+        dm_data.append(dm_id.location)
+        dm_data.append(dm_id.status)
+        dm_data.append(dm_id.entrance_type)
+        dm_data.append(dm_id.entrance_value)
+        dm_data.append(dm_id.enter_time)
+        dm_data.append(dm_id.update_time)
+        dm_all_data.append(dm_data)
+# Paginator 
+    paginator = Paginator(dm_all_data, 25)
+    page = request.GET.get('page')
+    try:
+        dm_p_data = paginator.page(page)
+    except:
+        dm_p_data = paginator.page(1)
+    return render_to_response('showdomain.html',{'dm_all_data':dm_p_data})
+
+def all_info(request):
+    server_list = server.objects.all()
+#    server_col = ['uuid','project','location','status','inter_ip','exter_ip','cpu','memory','disk_size','os_type','enter_time','update_time','subnet']
+    server_all_data = []
+    for i in server_list:
+        server_data = []
+        server_id = server.objects.get(uuid=i)
+#        for j in server_col:
+#            server_data.append(server_id.j)
+        server_data.append(server_id.uuid)
+        server_data.append(server_id.project)
+        server_data.append(server_id.location)
+        server_data.append(server_id.status)
+        server_data.append(server_id.inter_ip)
+        server_data.append(server_id.exter_ip)
+        server_data.append(server_id.cpu)
+        server_data.append(server_id.memory)
+        server_data.append(server_id.disk_size)
+        server_data.append(server_id.os_type)
+        server_data.append(server_id.enter_time)
+        server_data.append(server_id.update_time)
+        server_data.append(server_id.subnet)
+        server_all_data.append(server_data)
+
+    db_list = dbserver.objects.all()
+    db_all_data = []
+    for i in db_list:
+        db_data = []
+        db_id = dbserver.objects.get(instance_id=i)
+        db_data.append(db_id.instance_id)
+        db_data.append(db_id.project)
+        db_data.append(db_id.location)
+        db_data.append(db_id.status)
+        db_data.append(db_id.inter_ip)
+        db_data.append(db_id.hardware_info)
+        db_data.append(db_id.port)
+        db_data.append(db_id.db_type)
+        db_data.append(db_id.enter_time)
+        db_data.append(db_id.update_time)
+        db_all_data.append(db_data)
+
+    dm_list = domain.objects.all()
+    dm_all_data = []
+    for i in dm_list:
+        dm_data = []
+        dm_id = domain.objects.get(domain_name=i)
+        dm_data.append(dm_id.domain_name)
+        dm_data.append(dm_id.project)
+        dm_data.append(dm_id.location)
+        dm_data.append(dm_id.status)
+        dm_data.append(dm_id.entrance_type)
+        dm_data.append(dm_id.entrance_value)
+        dm_data.append(dm_id.enter_time)
+        dm_data.append(dm_id.update_time)
+        dm_all_data.append(dm_data)
+    return render_to_response('all_info.html',{'server_all_data':server_all_data,'db_all_data':db_all_data,'dm_all_data':dm_all_data})
+
+def nav(request):
+    return render_to_response('nav.html')
+
+def index(request):
+    return render_to_response('index.html')
+
+def addform(request):
+    return render_to_response('addform.html')
+
+def addserver(request):
+    #test = request.POST
+    #print test
+    status = request.POST['status']
+    subnet = request.POST['subnet']
+    disk_size = request.POST['disk_size']
+    uuid= request.POST['uuid']
+    inter_ip = request.POST['inter_ip']
+    project = request.POST['project']
+    exter_ip = request.POST['exter_ip']
+    location = request.POST['location']
+    memory = request.POST['memory']
+    os_type = request.POST['os_type']
+    cpu = request.POST['cpu']
+    server1 = server(status=status,subnet=subnet,disk_size=disk_size,uuid=uuid,inter_ip=inter_ip,project=project,exter_ip=exter_ip,location=location,memory=memory,os_type=os_type,cpu=cpu)
+    try:
+        server1.save()
+    except:
+        return HttpResponse("请确保uuid没被使用过。")
+    return HttpResponseRedirect('/')
+
+def delserver(request):
+    uuid = request.POST['uuid']
+    try:
+        server3 = server.objects.get(uuid=uuid)
+    except:
+        return HttpResponse("你要删除的uuid不存在。")
+    server3.delete()
+    page = request.POST['pagen']
+    url = '/showserver/?page=%s' % page
+    return HttpResponseRedirect(url)
+
+def rvsserver(request):
+    status = request.POST['status']
+    subnet = request.POST['subnet']
+    disk_size = request.POST['disk_size']
+    uuid= request.POST['uuid']
+    inter_ip = request.POST['inter_ip']
+    project = request.POST['project']
+    exter_ip = request.POST['exter_ip']
+    location = request.POST['location']
+    memory = request.POST['memory']
+    os_type = request.POST['os_type']
+    cpu = request.POST['cpu']
+    pagel = request.POST['pagel']
+    try:
+        server2=server.objects.get(uuid=uuid)
+    except:
+        addserver(request)
+        urll = '/showserver/?page=%s' % pagel
+        return HttpResponseRedirect(urll)
+    server2.status = status
+    server2.subnet = subnet
+    server2.disk_size = disk_size
+    server2.inter_ip = inter_ip
+    server2.project = project
+    server2.exter_ip = exter_ip
+    server2.location = location
+    server2.memory = memory
+    server2.os_type = os_type
+    server2.cpu = cpu
+    server2.save()
+# Paginator 
+#    paginator = Paginator(server_all_data, 25)
+    page = request.POST['pagen']
+#    try:
+#        server_p_data = paginator.page(page)
+#    except:
+#        server_p_data = paginator.page(1)
+# 
+    url = '/showserver/?page=%s' % page
+    return HttpResponseRedirect(url)
+
+def adddbserver(request):
+    #test = request.POST
+    #print test
+    status = request.POST['status']
+    project = request.POST['project']
+    db_type = request.POST['db_type']
+    inter_ip = request.POST['inter_ip']
+    port = request.POST['port']
+    instance_id = request.POST['instance_id']
+    location = request.POST['location']
+    hardware_info = request.POST['hardware_info']
+    instance1 = dbserver(status=status,project=project,db_type=db_type,inter_ip=inter_ip,port=port,instance_id=instance_id,location=location,hardware_info=hardware_info)
+    try:
+        instance1.save()
+    except:
+        return HttpResponse('请确保没有输入过同样的instance名。')
+    return HttpResponseRedirect('/')
+    
+def delinstance(request):
+    instance_id = request.POST['instance_id']
+    try:
+        instance3 = dbserver.objects.get(instance_id=instance_id)
+    except:
+        return HttpResponse("你要删除的instance不存在。")
+    instance3.delete()
+    page = request.POST['pagen']
+    url = '/showdb/?page=%s' % page
+    return HttpResponseRedirect(url)
+
+def rvsinstance(request):
+    status = request.POST['status']
+    project = request.POST['project']
+    db_type = request.POST['db_type']
+    inter_ip = request.POST['inter_ip']
+    port = request.POST['port']
+    instance_id = request.POST['instance_id']
+    location = request.POST['location']
+    hardware_info = request.POST['hardware_info']
+    pagel = request.POST['pagel']
+    try:
+        instance2 = dbserver.objects.get(instance_id=instance_id)
+    except:
+        adddbserver(request)
+        urll = '/showdb/?page=%s' % pagel
+        return HttpResponseRedirect(urll)
+    instance2.location = location
+    instance2.hardware_info = hardware_info
+    instance2.status = status
+    instance2.project = project
+    instance2.db_type = db_type
+    instance2.inter_ip = inter_ip
+    instance2.port = port
+    instance2.save()
+    page = request.POST['pagen']
+    url = '/showdb/?page=%s' % page
+    return HttpResponseRedirect(url)
+    
+def adddomain(request):
+    #test = request.POST
+    #print test
+    status = request.POST['status']
+    project = request.POST['project']
+    entrance_type = request.POST['entrance_type']
+    entrance_value = request.POST['entrance_value']
+    domain_name= request.POST['domain_name']
+    location = request.POST['location']
+    domain1=domain(status=status,project=project,entrance_type=entrance_type,entrance_value=entrance_value,domain_name=domain_name,location=location)
+    try:
+        domain1.save()
+    except:
+        return HttpResponse('请不要输入重复的domain名。')
+    return HttpResponseRedirect('/')
+    
+def deldomain(request):
+    domain_name = request.POST['domain_name']
+    try:
+        domain3 = domain.objects.get(domain_name=domain_name)
+    except:
+        return HttpResponse("你要删除的domain不存在。")
+    domain3.delete()
+    page = request.POST['pagen']
+    url = '/showdomain/?page=%s' % page
+    return HttpResponseRedirect(url)
+
+def rvsdomain(request):
+    status = request.POST['status']
+    project = request.POST['project']
+    entrance_type = request.POST['entrance_type']
+    entrance_value = request.POST['entrance_value']
+    domain_name= request.POST['domain_name']
+    location = request.POST['location']
+    pagel = request.POST['pagel']
+    try:
+        domain2 = domain.objects.get(domain_name=domain_name)
+    except:
+        adddomain(request)
+        urll = '/showdomain/?page=%s' % pagel
+        return HttpResponseRedirect(urll)
+    domain2.location = location
+    domain2.status = status
+    domain2.project = project
+    domain2.entrance_type = entrance_type
+    domain2.entrance_value = entrance_value
+    domain2.domain_name = domain_name
+    domain2.save()
+    page = request.POST['pagen']
+    url = '/showdomain/?page=%s' % page
+    return HttpResponseRedirect(url)

@@ -1,0 +1,201 @@
+﻿<html>
+  <head>
+ {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+<script type="text/javascript">
+function show()
+{
+	var vshowOrHide = document.getElementById("showOrHide");
+	vshowOrHide.className = 'glyphicon glyphicon-chevron-right';
+	var vrunsalt = document.getElementById("runsalt");
+	vrunsalt.className = 'glyphicon glyphicon-chevron-right';
+}
+function runsalt_f()
+{
+	var vzxzyul = document.getElementById("zxzyul");
+	var vrunsalt = document.getElementById("runsalt");
+	var vdt12 = document.getElementById("dt12");
+	var vdt22 = document.getElementById("dt22");
+	var vdt32 = document.getElementById("dt32");
+	var vdt42 = document.getElementById("dt42");
+	var vdt52 = document.getElementById("dt52");
+	if(vzxzyul.className == "ctt1"){
+		vzxzyul.className = "ctt0";
+		vrunsalt.className = "glyphicon glyphicon-chevron-right";
+		vdt12.className = 'tbl0';
+		vdt22.className = 'tbl0';
+		vdt32.className = 'tbl0';
+		vdt42.className = 'tbl0';
+		vdt52.className = 'tbl0';
+	} else {
+		vzxzyul.className = "ctt1";
+		vrunsalt.className = "glyphicon glyphicon-chevron-down";
+	};
+}
+function showhide()
+{
+//	var news = document.getElementById("content");
+//	if(typeof(news) != "undefined" ){
+//		news.style.display = (news.style.display.toLowerCase()=="none") ? "":"none";
+//		this.innerHTML = (news.style.display.toLowerCase()=="none") ? "-资产信息" : "+资产信息";
+//	}
+	var vctt = document.getElementById("content");
+	var vshowOrHide = document.getElementById("showOrHide");
+	var vdt1 = document.getElementById("dt1");
+	var vdt2 = document.getElementById("dt2");
+	var vdt3 = document.getElementById("dt3");
+	var vdt4 = document.getElementById("dt4");
+	if(vctt.className == 'ctt1'){
+		vctt.className = 'ctt0';
+		vshowOrHide.className = 'glyphicon glyphicon-chevron-right';
+		vdt1.className = 'tbl0';
+		vdt2.className = 'tbl0';
+		vdt3.className = 'tbl0';
+		vdt4.className = 'tbl0';
+	} else {
+		vctt.className = 'ctt1'
+		vshowOrHide.className = 'glyphicon glyphicon-chevron-down';
+	};
+}
+
+// 点击任意一个div隐藏其他指定的div:
+function showdt1()
+{
+	var vdt1 = document.getElementById("dt1");
+	vdt1.className = 'tbl1';
+	var vdt2 = document.getElementById("dt2");
+	vdt2.className = 'tbl0';
+	var vdt3 = document.getElementById("dt3");
+	vdt3.className = 'tbl0';
+	var vdt5 = document.getElementById("dt5");
+	vdt5.className = 'tbl0';
+}
+function showdt2()
+{
+	var vdt1 = document.getElementById("dt1");
+	vdt1.className = 'tbl0';
+	var vdt2 = document.getElementById("dt2");
+	vdt2.className = 'tbl1';
+	var vdt3 = document.getElementById("dt3");
+	vdt3.className = 'tbl0';
+	var vdt5 = document.getElementById("dt5");
+	vdt5.className = 'tbl0';
+}
+function showdt3()
+{
+	var vdt1 = document.getElementById("dt1");
+	vdt1.className = 'tbl0';
+	var vdt2 = document.getElementById("dt2");
+	vdt2.className = 'tbl0';
+	var vdt3 = document.getElementById("dt3");
+	vdt3.className = 'tbl1';
+	var vdt5 = document.getElementById("dt5");
+	vdt5.className = 'tbl0';
+}
+function showdt5()
+{
+	var vdt1 = document.getElementById("dt1");
+	vdt1.className = 'tbl0';
+	var vdt2 = document.getElementById("dt2");
+	vdt2.className = 'tbl0';
+	var vdt3 = document.getElementById("dt3");
+	vdt3.className = 'tbl0';
+	var vdt5 = document.getElementById("dt5");
+	vdt5.className = 'tbl1';
+}
+//***************************************//
+function showdt12()
+{
+	var vdt12 = document.getElementById("dt12");
+	vdt12.className = 'tbl1';
+	var vdt22 = document.getElementById("dt22");
+	vdt22.className = 'tbl0';
+	var vdt32 = document.getElementById("dt32");
+	vdt32.className = 'tbl0';
+	var vdt42 = document.getElementById("dt42");
+	vdt42.className = 'tbl0';
+	var vdt52 = document.getElementById("dt52");
+	vdt52.className = 'tbl0';
+}
+function showdt22()
+{
+	var vdt12 = document.getElementById("dt12");
+	vdt12.className = 'tbl0';
+	var vdt22 = document.getElementById("dt22");
+	vdt22.className = 'tbl1';
+	var vdt32 = document.getElementById("dt32");
+	vdt32.className = 'tbl0';
+	var vdt42 = document.getElementById("dt42");
+	vdt42.className = 'tbl0';
+	var vdt52 = document.getElementById("dt52");
+	vdt52.className = 'tbl0';
+}
+function showdt32()
+{
+	var vdt12 = document.getElementById("dt12");
+	vdt12.className = 'tbl0';
+	var vdt22 = document.getElementById("dt22");
+	vdt22.className = 'tbl0';
+	var vdt32 = document.getElementById("dt32");
+	vdt32.className = 'tbl1';
+	var vdt42 = document.getElementById("dt42");
+	vdt42.className = 'tbl0';
+	var vdt52 = document.getElementById("dt52");
+	vdt52.className = 'tbl0';
+}
+function showdt42()
+{
+	var vdt12 = document.getElementById("dt12");
+	vdt12.className = 'tbl0';
+	var vdt22 = document.getElementById("dt22");
+	vdt22.className = 'tbl0';
+	var vdt32 = document.getElementById("dt32");
+	vdt32.className = 'tbl0';
+	var vdt42 = document.getElementById("dt42");
+	vdt42.className = 'tbl1';
+	var vdt52 = document.getElementById("dt52");
+	vdt52.className = 'tbl0';
+}
+function showdt52()
+{
+	var vdt12 = document.getElementById("dt12");
+	vdt12.className = 'tbl0';
+	var vdt22 = document.getElementById("dt22");
+	vdt22.className = 'tbl0';
+	var vdt32 = document.getElementById("dt32");
+	vdt32.className = 'tbl0';
+	var vdt42 = document.getElementById("dt42");
+	vdt42.className = 'tbl0';
+	var vdt52 = document.getElementById("dt52");
+	vdt52.className = 'tbl1';
+}
+</script>
+  </head>
+  <body style="background-color:#f5f5f5;" onload="show()">
+	<ul>
+		<a class="noline" href="/addform/" target="d22fm" onClick="showhide()" id="showOrHide" style="line-height:30px;">资产信息</a>
+	
+		<div class="ctt0" id="content">
+			<a target="d22fm" class="noline tbl0" id="ul11" href="/showserver/"><div id="dt1" onClick="showdt1()"><li>服务器</li></div></a>
+			<a target="d22fm" class="noline tbl0" id="ul12" href="/showdb/"><div id="dt2" onClick="showdt2()"><li>实例信息</li></div></a>
+			<a target="d22fm" class="noline tbl0" id="ul13" href="/showdomain/"><div id="dt3" onClick="showdt3()"><li>域名信息</li></div></a>
+			<!--<a target="d22fm" class="noline tbl0" id="ul15"><div id="dt5" onClick="showdt5()"><li>DB使用概况</li></div></a>-->
+			<a target="_blank" class="noline tbl0" id="ul14" href="/showsrv_role/"><div id="dt4"><li>游戏服信息</li></div></a>
+			<a target="d22fm" class="noline tbl0" id="ul15" href="/wdqk_info/"><div id="dt5" onClick="showdt5()"><li>武动乾坤</li></div></a>
+		</div>
+	</ul>
+	<ul>
+		<a class="noline" href="/showsalt/" target="d22fm" onClick="runsalt_f()" id="runsalt" style="line-height:30px;">执行作业</a>
+		<div class='ctt0' id="zxzyul">
+			<a target="d22fm" class="noline tbl0" id="ul21" href="/script_file/"><div id="dt12" onClick="showdt12()"><li>快速脚本</li></div></a>
+			<a target="d22fm" class="noline tbl0" id="ul22" href="/run_job/"><div id="dt22" onClick="showdt22()"><li>作业执行</li></div></a>
+			<a target="d22fm" class="noline tbl0" id="ul23" href="/job_list/"><div id="dt32" onClick="showdt32()"><li>常见作业</li></div></a>
+			<a target="d22fm" class="noline tbl0" id="ul25" href="/timing_job/"><div id="dt52" onClick="showdt52()"><li>定时作业</li></div></a>
+			<a target="_blank" class="noline tbl0" id="ul24" href="https://10.10.30.207"><div id="dt42" onClick="showdt42()"><li>SHELL</li></div></a>
+		</div>
+	</ul>
+  </body>
+</html>

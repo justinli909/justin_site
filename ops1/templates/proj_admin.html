@@ -1,0 +1,719 @@
+﻿<html>
+  <head>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+    <link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+    <script src="/static/jquery/jquery-1.12.3.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src={% static "js/bootstrap.js" %}></script>
+  </head>
+  <body>
+  <div style="float:left;min-width:300px;margin-left:20px;margin-top:25px;">
+    <fieldset>
+    <legend>用户</legend>
+      <div>
+        <label>添加用户:</label>
+        <input class="form-control" id="user_name" type="txt" placeholder="请在此输入用户名称;"/><br />
+        <input class="form-control" id="user_passwd" type="password" placeholder="请在此用户默认密码;"/><br />
+        <input class="form-control" id="user_passwd_r" type="password" placeholder="请再次输入默认密码;"/><br />
+        <button id="create_user" class="btn btn-primary">提交</button>
+      </div>
+      <br />
+      <div>
+        <label>禁用、启用或删除用户:</label>
+        <!--<input class="form-control" id="del_user_name" type="txt" placeholder="请在此输入用户名称;"/></input>-->
+        <select id="del_user_name" class="form-control">
+          <option>==请选择用户名==</option>
+        </select><br />
+        <button id="stop_user" class="btn btn-warning">停用</button>
+        <button id="start_user" class="btn btn-primary">启用</button>
+        <button id="del_user2" class="btn btn-danger">删除</button>
+      </div>
+        <br />
+      <div>
+        <table class="table table-striped table-hover">
+          <label>用户一览:</label>
+          <tbody id="user_list_table">
+            <tr>
+              <th>用户名</th>
+              <th>状态</th>
+              <th>最后登录</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </fieldset>
+  </div>
+  <div style="float:left;min-width:300px;margin-left:30px;margin-top:25px;">
+    <fieldset>
+    <legend>项目</legend>
+      <div style="float:left;min-width:300px;">
+        <!--<div style="width:300px;margin-left:20px;">
+          <p>hello, {{ user.username }}</p>
+        </div>-->
+        <div style="width:300px;">
+          <label>添加游戏项目:</label>
+          <input class="form-control" id="proj_name" type="txt" placeholder="请在此输入游戏项目名称;"/><br />
+          <input class="form-control" id="proj_ip" type="txt" placeholder="请在此输入项目运维机ip;"/><br />
+          <button id="create_proj" class="btn btn-primary">提交</button>
+        </div>
+        <br />
+        <div style="width:300px;">
+          <label>修改游戏项目:</label>
+          <select id="rproj_name" class="form-control">
+            <option>==请选择游戏项目==</option>
+          </select><br />
+          <input class="form-control" id="rproj_ip" type="txt" placeholder="请在此输入项目运维机ip;"/><br />
+          <button id="rvs_proj" class="btn btn-primary">提交</button>
+          <button id="del_game_proj" class="btn btn-danger">删除</button>
+        </div>
+        <br />
+        <div style="width:300px;">
+          <label>分配项目权限:</label>
+          <select id="proj_user" class="form-control">
+            <option>==请选择用户名==</option>
+          </select><br />
+          <select id="proj_names" class="form-control">
+            <option>==请选择游戏项目==</option>
+          </select><br />
+          <button id="assign_proj" class="btn btn-primary">提交</button>
+        </div>
+        <br />
+        <div style="width:300px;">
+          <label>删除项目权限</label>
+          <select id="del_proj_user" class="form-control">
+            <option>==请选择用户名==</option>
+          </select><br />
+          <select id="del_proj_names" class="form-control">
+            <option>==请选择游戏项目==</option>
+          </select><br />
+          <button id="del_proj" class="btn btn-primary">提交</button>
+        </div>
+        <br />
+      </div>
+      <div style="float:left;min-width:300px;margin-left:30px;">
+        <table class="table table-striped table-hover">
+          <label>游戏项目一览:</label>
+          <tbody id="proj_table">
+            <tr>
+              <th>游戏项目</th>
+              <th>IP</th>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        <label>用户项目权限:</label>
+        <table class="table table-striped table-hover">
+          <tbody id="user_table">
+            <tr>
+              <th>用户名</th>
+              <th>游戏项目</th>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+      </div>
+    </fieldset>
+  </div>
+  <div style="float:left;min-width:300px;margin-left:30px;margin-top:25px;">
+    <fieldset>
+    <legend>权限</legend>
+      <label>修改用户权限</label>
+      <select id="priv_proj" class="form-control">
+        <option>==请选择游戏项目==</option>
+      </select><br />
+      <select id="priv_user" class="form-control">
+        <option>==请选择用户名==</option>
+      </select><br />
+      <select id="priv_n" class="form-control">
+        <option value="0">==请选择权限==</option>
+        <option value="1">查询</option>
+        <option value="2">执行</option>
+        <option value="3">修改</option>
+      </select><br />
+      <button id="priv_sub" class="btn btn-primary">提交</button>
+      <button id="priv_del" class="btn btn-danger">删除</button>
+      <br />
+      <br />
+      <label>用户操作权限:</label>
+      <table class="table table-striped table-hover">
+        <tbody id="priv_table">
+          <tr>
+            <th>游戏项目</th>
+            <th>用户名</th>
+            <th>权限</th>
+          </tr>
+        </tbody>
+      </table>
+      <br />
+    </fieldset>
+  </div>
+  <script type="text/javascript">
+  function get_proj_priv(table_name){
+    var tmp_data = [];
+    $.ajax({
+      url:'/get_proj_priv/',
+      type:'post',
+      async:false,
+      data:{table_name,table_name},
+      success:function(arg){
+        tmp_data = jQuery.parseJSON(arg);
+        //alert(tmp_data);
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+    return tmp_data;
+  }
+  function init_user_table(){
+    user_data = get_proj_priv('user');
+    $('#user_list_table').html('            <tr>\
+              <th>用户名</th>\
+              <th>状态</th>\
+              <th>最后登录</th>\
+            </tr>');
+    $(user_data).each(function(i,item){
+      $('#user_list_table').append('<tr>\
+      <td>' + item.username + '</td>\
+      <td>' + item.status + '</td>\
+      <td>' + item.last_login + '</td>\
+      </tr>');
+    });
+  }
+  function init_gameproj(){
+    game_data = get_proj_priv('game_proj');
+    $('#proj_table').html('        <tr>\
+        <th>游戏项目</th>\
+        <th>IP</th>\
+      </tr>');
+    game_data_new = new Object;
+    $(game_data).each(function(i,item){
+      $('#proj_table').append('<tr>\
+      <td>' +  item.proj_name + '</td>\
+      <td>' +  item.proj_ip + '</td>\
+      </tr>');
+      game_data_new[item.proj_name] = item.proj_ip;
+    });
+
+  }
+  function init_userprvi(){
+    prvi_data = get_proj_priv('proj_prvi');
+    $('#user_table').html('        <tr>\
+        <th>用户名</th>\
+        <th>游戏项目</th>\
+      </tr>');
+    prvi_data_new = new Object;
+    $(prvi_data).each(function(i,item){
+      $('#user_table').append('<tr>\
+      <td>' + item.user + '</td>\
+      <td>' + item.proj + '</td>\
+      </tr>');
+      prvi_data_new[item.user] = item.proj;
+    });
+  }
+  function init_diff_proj(){
+    diff_proj = new Object();
+    var proj_list = new Array();
+    $(game_data).each(function(i,item){
+      proj_list.push(item.proj_name);
+    });
+    //alert(proj_list);
+    $(prvi_data).each(function(i,item){
+      //diff_proj['user'] = item.user;
+      var diff_proj_array = new Array();
+      for(var i=0; i<proj_list.length; i++){
+        //diff_proj_array = new Array();
+        var flag = 0;
+        for(var j=0; j<item.proj.length; j++){
+          if(proj_list[i] == item.proj[j]){
+            flag = 0;
+            break;
+          } else {
+            flag = 1;
+          }
+        }
+        if(flag==1){
+          diff_proj_array.push(proj_list[i]);
+        }
+      }
+      diff_proj[item.user] = diff_proj_array;
+    });
+    //return diff_proj;
+  }
+  function get_proj_user_list(){
+    user_name_list = new Array();
+    proj_name_list = new Array();
+    $.ajax({
+      url:'/get_proj_data/',
+      type:'post',
+      async:false,
+      success:function(arg){
+        data = jQuery.parseJSON(arg);
+        user_name_list = data.user;
+        proj_name_list = data.proj;
+      },
+      error:function(){
+        alert("异常!");
+      },
+    });
+  }
+  function init_projpriv(){
+    var priv_all = ['查询','执行','修改']
+    proj_priv_data = get_proj_priv('user_priv');
+    //alert(proj_priv_data);
+    $('#priv_table').html('        <tr>\
+          <th>游戏项目</th>\
+          <th>用户名</th>\
+          <th>权限</th>\
+        </tr>');
+    $(proj_priv_data).each(function(i,item){
+      //alert(item.proj);
+      //alert(item.user);
+      //alert(priv_all[Number(item.priv)-1]);
+      $('#priv_table').append('<tr>\
+      <td>' + item.proj + '</td>\
+      <td>' + item.user + '</td>\
+      <td>' + priv_all[Number(item.priv)-1] + '</td>\
+      </tr>');
+    });
+  }
+  function init_all(){
+    init_user_table();
+    get_proj_user_list();
+    init_gameproj();
+    init_userprvi();
+    init_diff_proj();
+    init_projpriv();
+    $('#rproj_name').html('<option>==请选择游戏项目==</option>');
+    $(game_data).each(function(i,item){
+      $('#rproj_name').append('<option value = "' + item.proj_name + '">' + item.proj_name + '</option>');
+    });
+    $('#proj_user').html('<option>==请选择用户名==</option>');
+    $('#del_user_name').html('<option>==请选择用户名==</option>');
+    $('#del_proj_user').html('<option>==请选择用户名==</option>');
+    $(prvi_data).each(function(i,item){
+      //var item_tmp = item.proj.join();
+      $('#del_proj_user').append('<option value = "' + item.user + '">' + item.user + '</option>');
+    });
+    $(user_name_list).each(function(i,item){
+      $('#proj_user').append('<option value = "' + item + '">' + item + '</option>');
+      $('#del_user_name').append('<option value = "' + item + '">' + item + '</option>');
+    });
+    $('#priv_proj').html('<option>==请选择游戏项目==</option>');
+    $(proj_name_list).each(function(i,item){
+      $('#priv_proj').append('<option value = "' + item + '">' + item + '</option>');
+    });
+    $('#priv_user').html('<option>==请选择用户名==</option>');
+    $(user_name_list).each(function(i,item){
+      $('#priv_user').append('<option value = "' + item + '">' + item + '</option>');
+    });
+    //$.ajax({
+    //  url:'/get_proj_data/',
+    //  type:'post',
+    //  success:function(arg){
+    //    data = jQuery.parseJSON(arg);
+    //    var user_data = data.user;
+    //    var proj_data = data.proj;
+    //    proj_ips = data.ip
+    //    //$('#proj_names').html('<option>==请选择游戏项目==</option>')
+    //    $('#rproj_name').html('<option>==请选择游戏项目==</option>')
+    //    $('#proj_user').html('<option>==请选择用户名==</option>')
+    //    $('#del_proj_user').html('<option>==请选择用户名==</option>')
+    //    $.each(proj_data,function(i,item){
+    //      if(item != 'none'){
+    //        //$('#proj_names').append('<option value = "' + item + '">' + item + '</option>');
+    //        $('#rproj_name').append('<option value = "' + item + '">' + item + '</option>');
+    //      }
+    //    });
+    //    $.each(user_data,function(i,item){
+    //      if(item != 'none'){
+    //        $('#proj_user').append('<option value = "' + item + '">' + item + '</option>');
+    //        $('#del_proj_user').append('<option value = "' + item + '">' + item + '</option>');
+    //      }
+    //    });
+    //  },
+    //  error:function(){
+    //    alert("异常!");
+    //  },
+    //});
+  }
+  $('#del_user2').click(function(){
+    var del_user_name = $('#del_user_name').val();
+    if(del_user_name=='==请选择用户名=='){
+        alert('请选择用户名!');
+        return false;
+    }
+    $.ajax({
+      url:'/delete_user/',
+      type:'post',
+      async:true,
+      data:{del_user_name:del_user_name},
+      success:function(arg){
+        if(arg=='True'){
+          alert('操作成功!');
+          init_all();
+        } else {
+          alert('操作失败!');
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  
+  $('#start_user').click(function(){
+    var del_user_name = $('#del_user_name').val();
+    if(del_user_name=='==请选择用户名=='){
+        alert('请选择用户名!');
+        return false;
+    }
+    $.ajax({
+      url:'/start_user/',
+      type:'post',
+      async:true,
+      data:{del_user_name:del_user_name},
+      success:function(arg){
+        if(arg=='True'){
+          alert('操作成功!');
+          init_all();
+        } else {
+          alert('操作失败!');
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  
+  $('#stop_user').click(function(){
+    var del_user_name = $('#del_user_name').val();
+    //alert(del_user_name);
+    if(del_user_name=='==请选择用户名=='){
+        alert('请选择用户名!');
+        return false;
+    }
+    $.ajax({
+      url:'/stop_user/',
+      type:'post',
+      async:true,
+      data:{del_user_name:del_user_name},
+      success:function(arg){
+        if(arg=='True'){
+          alert('操作成功!');
+          init_all();
+        } else {
+          alert('操作失败!');
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  
+  $('#create_user').click(function(){
+    var user_name = $('#user_name').val();
+    var user_passwd = $('#user_passwd').val();
+    var user_passwd_r = $('#user_passwd_r').val();
+    if(user_passwd != user_passwd_r){
+      alert('两次输入的密码不一致!');
+      $('#user_passwd_r').focus();
+      return false;
+    }
+    $.ajax({
+      url:'/create_user/',
+      type:'post',
+      async:true,
+      data:{
+        user_name:user_name,
+        user_passwd:user_passwd,
+        user_passwd_r:user_passwd_r,
+      },
+      success:function(arg){
+        if(arg=='True'){
+          alert('创建成功!');
+          $('#user_name').val('');
+          $('#user_passwd').val('');
+          $('#user_passwd_r').val('');
+          init_all();
+        } else {
+          alert('创建失败!');
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  
+  $('#priv_del').click(function(){
+    var priv_proj = $('#priv_proj').val();
+    var priv_user = $('#priv_user').val();
+    $.ajax({
+      url:'/priv_del/',
+      type:'post',
+      async:true,
+      data:{priv_proj:priv_proj,priv_user:priv_user},
+      success:function(arg){
+        if(arg == 'True'){
+          alert('删除成功!');
+          init_all();
+        } else {
+          alert('删除失败!');
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  $('#priv_sub').click(function(){
+    var priv_proj = $('#priv_proj').val();
+    var priv_user = $('#priv_user').val();
+    var priv_n = $('#priv_n').val();
+    if(priv_n == 0){
+      alert('请选择权限级别!');
+      $('#priv_n').focus();
+      return false;
+    }
+    $.ajax({
+      url:'/update_priv/',
+      type:'post',
+      async:false,
+      data:{
+        priv_proj:priv_proj,
+        priv_user:priv_user,
+        priv_n:priv_n,
+      },
+      success:function(arg){
+        if(arg=='True'){
+          alert('权限已更新!');
+          init_all();
+        } else {
+          alert('更新失败!');
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  $(document).ready(function(){
+    init_all();
+  });
+  $('#rproj_name').change(function(){
+    var proj_selected = $(this).val();
+    $('#rproj_ip').val(game_data_new[proj_selected]);
+  });
+  $('#del_game_proj').click(function(){
+    var proj_name = $('#rproj_name').val();
+    $.ajax({
+      url:'/del_game_proj/',
+      type:'post',
+      async:true,
+      data:{proj_name:proj_name},
+      success:function(arg){
+        if(arg == 'True'){
+          alert('删除成功!');
+          //delete proj_ips[proj_name];
+          //init_gameproj();
+          init_all();
+          $('#rproj_ip').val('');
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  $('#rvs_proj').click(function(){
+    var proj_name = $('#rproj_name').val();
+    var proj_ip = $('#rproj_ip').val();
+    var reg_ip = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/;
+    if(!reg_ip.test(proj_ip)){
+      //$('#proj_ip').val('');
+      $('#rproj_ip').focus();
+      alert("请输入有效的IP格式...");
+      return false;
+    }
+    $.ajax({
+      url:'/update_proj/',
+      type:'post',
+      async:true,
+      data:{proj_name,proj_ip},
+      success:function(arg){
+        if(arg == 'True'){
+          alert('修改成功!');
+          //proj_ips[proj_name] = proj_ip;
+          //init_gameproj();
+          init_all();
+          $('#rproj_ip').val('');
+        } else {
+          alert('修改失败!');
+        }
+      },
+      error:function(){
+        alert("异常!");
+      },
+    });
+  });
+  $('#create_proj').click(function(){
+    var proj_name = $('#proj_name').val();
+    var proj_ip = $('#proj_ip').val();
+    var reg = /^\w.*$/;
+    var reg_ip = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/;
+    if(!reg.test(proj_name)){
+      //$('#proj_name').val('');
+      $('#proj_name').focus();
+      alert('请输入有效的游戏项目名...');
+      return false;
+    }
+    if(!reg_ip.test(proj_ip)){
+      //$('#proj_ip').val('');
+      $('#proj_ip').focus();
+      alert("请输入有效的IP格式...");
+      return false;
+    }
+    $.ajax({
+      url:'/create_proj/',
+      type:'post',
+      data:{proj_name:proj_name,proj_ip,proj_ip},
+      async: false,
+      success:function(arg){
+        if(arg == 'True'){
+          alert("添加成功!");
+          //$('#proj_names').append('<option value = "' + proj_name + '">' + proj_name + '</option>');
+          //$('#proj_name').val('')
+          init_all();
+          $('#proj_ip').val('');
+        } else {
+          alert("添加失败, 或因game proj已经存在!");
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  //function check_proj(){
+  //  var current_user = $('#proj_user').val();
+  //  //alert(current_user);
+  //  $.ajax({
+  //    url:'/check_proj/',
+  //    type:'post',
+  //    async:true,
+  //    data:{current_user:current_user},
+  //    success:function(arg){
+  //      var data = jQuery.parseJSON(arg);
+  //      if(data[0] == 'none'){
+  //        return false;
+  //      } else {
+  //        $('#proj_names').html('<option>==请选择游戏项目==</option>');
+  //      }
+  //      $.each(data,function(i,item){
+  //        $('#proj_names').append('<option value = "' + item + '">' + item + '</option>');
+  //      });
+  //    },
+  //    error:function(){
+  //      alert('异常!');
+  //    },
+  //  });
+  //}
+  //function check_proj_del(){
+  //  var current_user = $('#del_proj_user').val();
+  //  $.ajax({
+  //    url:'/check_proj_del/',
+  //    type:'post',
+  //    async:true,
+  //    data:{current_user:current_user},
+  //    success:function(arg){
+  //      var data = jQuery.parseJSON(arg);
+  //      if(data[0] == 'none'){
+  //        return false;
+  //      } else {
+  //        $('#del_proj_names').html('<option>==请选择游戏项目==</option>');
+  //      }
+  //      $.each(data,function(i,item){
+  //        $('#del_proj_names').append('<option value = "' + item + '">' + item + '</option>');
+  //      });
+  //    },
+  //    error:function(){
+  //      alert('异常!');
+  //    },
+  //  });
+  //}
+  $('#assign_proj').click(function(){
+    var proj_user = $('#proj_user').val();
+    var proj_names = $('#proj_names').val();
+    $.ajax({
+      url:'/assign_user_proj/',
+      type:'post',
+      data:{proj_user:proj_user,proj_names:proj_names},
+      async:true,
+      success:function(arg){
+        //alert(arg);
+        if(arg == 'True'){
+          alert("添加成功!");
+          init_all();
+          $('#proj_names').html('<option>==请选择游戏项目==</option>');
+        } else {
+          alert("添加失败!");
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  $('#proj_user').change(function(){
+    var selected_user = $(this).val();
+    $('#proj_names').html('<option>==请选择游戏项目==</option>');
+    $(diff_proj[selected_user]).each(function(i,item){
+      $('#proj_names').append('<option value = "' + item + '">' + item + '</option>');
+    });
+    if(! diff_proj[selected_user]){
+      $(proj_name_list).each(function(i,item){
+        $('#proj_names').append('<option value = "' + item + '">' + item + '</option>');
+      });
+    }
+    //check_proj();
+  });
+  $('#del_proj').click(function(){
+    var proj_user = $('#del_proj_user').val();
+    var proj_names = $('#del_proj_names').val();
+    $.ajax({
+      url:'/del_prvi/',
+      type:'post',
+      async:true,
+      data:{proj_user:proj_user,proj_names:proj_names},
+      success:function(arg){
+        if(arg == 'True'){
+          alert("删除成功!");
+          init_all();
+          $('#del_proj_names').html('<option>==请选择游戏项目==</option>');
+        } else {
+          alert("删除失败!");
+        }
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+  });
+  $('#del_proj_user').change(function(){
+    var selected_user = $(this).val();
+    $('#del_proj_names').html('<option>==请选择游戏项目==</option>');
+    $(prvi_data_new[selected_user]).each(function(i,item){
+      $('#del_proj_names').append('<option value = "' + item + '">' + item + '</option>');
+    });
+    //check_proj_del();
+  });
+  </script>
+  </body>
+</html>

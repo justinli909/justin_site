@@ -1,0 +1,231 @@
+<html>
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+    <script src="/static/jquery/jquery-1.12.3.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src={% static "js/bootstrap.js" %}></script>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+<script type="text/javascript">
+function disable_input()
+{
+	var ins = document.getElementById("ins_id");
+	var sel = document.getElementById("sel_type");
+	var opt=sel.selectedIndex
+	if(opt == 2)
+	{
+		ins.disabled = true;
+	}
+	else
+	{
+		ins.disabled = false;
+	}
+}	
+</script>
+</head>
+<body>
+<div>
+<div style="width:50%;float:left">
+<div style="width:90%;">
+<form id="addsrv" action="/rvs/" method="POST" name="addserver" class="form-horizontal" role="form">
+  <fieldset>
+    <legend>添加服务器信息</legend>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">UUID：</label><div class="col-sm-10"><input type="text" name="uuid" class="form-control"/></div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">项目：</label><div class="col-sm-10"><input type="text" name="project" class="form-control" value="{{ proj }}" readonly/></div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">地区：</label><div class="col-sm-10"><input type="text" name="location" class="form-control"/></div></div>
+<!--    状态：<input type="text" name="status" /><br/>-->
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">状态：</label>
+	<div class="col-sm-10">
+    <select name="status" class="form-control">
+      <option value="on_use">on use</option>
+      <option value="not_on_use">not on use</option>
+    </select></div></div>
+
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">用途：</label>
+	<div class="col-sm-10">
+    <select name="srv_type" class="form-control">
+      <option value="game server">game server</option>
+      <option value="mysql server">mysql server</option>
+      <option value="redis server">redis server</option>
+      <option value="N/A">N/A</option>
+    </select></div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">内网IP：</label><div class="col-sm-10"><input type="text" name="inter_ip" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">外网IP：</label><div class="col-sm-10"><input type="text" name="exter_ip" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">CPU(个)：</label><div class="col-sm-10"><input type="text" name="cpu" pattern="[0-9]{1,2}" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">内存(G)：</label><div class="col-sm-10"><input type="text" name="memory" pattern="[0-9]{1,2}" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">硬盘(G)：</label><div class="col-sm-10"><input type="text" name="disk_size" pattern="[0-9]{1,4}" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+<!--    操作系统：<input type="text" name="os_type"/><br/>-->
+    <label class="col-sm-2 control-label">操作系统：</label>
+    <div class="col-sm-10"><select name="os_type" class="form-control">
+      <option value="linux">Linux</option>
+      <option value="windows">Windows</option>
+    </select>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">子网：</label><div class="col-sm-10"><input type="text" name="subnet"  class="form-control"/>
+	</div></div>
+    {% if priv == 3 %}
+      <div align="center"><input type="submit" value="提交" class="btn btn-primary"/></div>
+    {% else %}
+      <div align="center"><input type="submit" value="提交" class="btn btn-primary" disabled/></div>
+    {% endif %}
+  </fieldset>
+  <input name="table" type="hidden" value="server"/>
+  <input name="action" type="hidden" value="add"/>
+</form>
+</div>
+</div>
+
+<div style="width:50%;float:right">
+<div style="width:90%;">
+<form id="adddbserver" action="/rvs/" method="POST" name="adddbserver" class="form-horizontal" role="form">
+  <fieldset>
+    <legend>添加数据库实例</legend>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">实例：</label><div class="col-sm-10"><input id="ins_id" type="text" name="instance_id" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">项目：</label><div class="col-sm-10"><input type="text" name="project" class="form-control" value="{{ proj }}" readonly/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">地区：</label><div class="col-sm-10"><input type="text" name="location" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">状态：</label>
+	<div class="col-sm-10">
+    <select name="status" class="form-control">
+      <option value="on_use">on use</option>
+      <option value="not_on_use">not on use</option>
+    </select>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">内网IP：</label><div class="col-sm-10"><input type="text" name="inter_ip" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">配置：</label><div class="col-sm-10"><input type="text" name="hardware_info" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">端口：</label><div class="col-sm-10"><input type="text" name="port" pattern="[0-9]{4,}" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">数据库：</label>
+	<div class="col-sm-10">
+    <select name="db_type" class="form-control"  onchange="disable_input()" id="sel_type">
+      <option value="mysql5.5">MySQL5.5</option>
+      <option value="mongodb3.0">Mongodb3.0</option>
+      <option value="redis">Redis</option>
+    </select>
+	</div></div>
+    {% if priv == 3 %}
+      <div align="center"><input type="submit" value="提交" class="btn btn-primary"/></div>
+    {% else %}
+      <div align="center"><input type="submit" value="提交" class="btn btn-primary" disabled/></div>
+    {% endif %}
+  </fieldset>
+  <input name="table" type="hidden" value="dbserver"/>
+  <input name="action" type="hidden" value="add"/>
+</form>
+</div>
+</div>
+<!--
+<div style="width:50%;float:right">
+<div style="width:90%;">
+<form id="adddomain" action="/adddomain/" method="POST" name="adddomain" class="form-horizontal" role="form">
+  <fieldset>
+    <legend>添加域名实例</legend>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">域名：</label><div class="col-sm-10"><input type="text" name="domain_name" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">项目：</label><div class="col-sm-10"><input type="text" name="project" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">地区：</label><div class="col-sm-10"><input type="text" name="location" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">状态：</label><div class="col-sm-10">
+    <select name="status" class="form-control">
+      <option value="on_use">on use</option>
+      <option value="not_on_use">not on use</option>
+    </select>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">记录类型：</label><div class="col-sm-10">
+    <select name="entrance_type" class="form-control">
+      <option value="A">A记录</option>
+      <option value="CDN">CDN</option>
+      <option value="Email">邮件</option>
+    </select>
+	</div></div>
+	<div  class="form-group">
+    <label class="col-sm-2 control-label">记录值：</label><div class="col-sm-10"><input type="text" name="entrance_value" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" class="form-control"/>
+	</div></div>
+    <div align="center"><input type="submit" value="提交" class="btn btn-primary"/></div>
+  </fieldset>
+</form>
+</div>
+
+<div style="width:90%;">
+  <form id="addsrv_role" action="/addsrv_role/" method="POST" name="addsrv_role" class="form-horizontal" role="form">
+    <fieldset>
+	  <legend>添加服务器角色</legend>
+	<div  class="form-group">
+	    <label class="col-sm-2 control-label" style="width: 120px;">服务器角色：</label><br /><br /><div class="col-sm-10" style="float:right"><select name="role" class="form-control">
+		  <option value="gameapp" selected="True">gameapp</option>
+		  <option value="nginx">nginx</option>
+		  <option value="platform">platform</option>
+	    </select>
+	</div></div>
+	<div  class="form-group">
+		<label class="col-sm-2 control-label">SALT ID：</label><div class="col-sm-10"><input type="text" name="salt_id" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+		<label class="col-sm-2 control-label">GAME服：</label><div class="col-sm-10"><input type="text" name="srv_name" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+		<label class="col-sm-2 control-label">SDB_HOST：</label><div class="col-sm-10"><input type="text" name="sdb_host" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" class="form-control"/>
+	</div></div>
+	<div  class="form-group">
+		<label class="col-sm-2 control-label">SDB_SLAVE_HOST：</label><br /><br /><div class="col-sm-10" style="float:right"><input type="text" name="sdb_slave_host" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"  class="form-control"/>
+	</div></div>
+	<div  class="form-group" >
+		<label class="col-sm-2 control-label">SOPEN_TIME：</label><br /><br /><div class="col-sm-10" style="float:right"><input type="text" name="sopen_time" class="form-control"/>
+	</div></div>
+    <div align="center"><input type="submit" value="提交" class="btn btn-primary"/></div>
+<pre>注: 1. "服务器角色"为game时, "GAME服"须满足此格式"s12345";
+    2. "服务器角色"为nginx或platform时, "GAME服"不能以"s"开头.</pre>
+	</fieldset>
+  </form>
+</div>
+-->
+</div>
+</div>
+  <script type="text/javascript">
+  $(document).ready(function(){
+      //var username = $('#ifram_username').val();
+      $('#username',parent.document).html('{{ user.username }}');
+      $('#projname',parent.document).html('{{ proj }}');
+  });
+  </script>
+</body>
+</html>

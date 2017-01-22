@@ -1,0 +1,1012 @@
+﻿<html>
+	<head>
+	{% load staticfiles %}
+		<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="/static/codemirror-5.19.0/lib/codemirror.css">
+		<link rel="stylesheet" href="/static/codemirror-5.19.0/theme/abcdef.css">
+        <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+        <link rel="stylesheet" href="/static/jquery-ui-1.12.1/jquery-ui.css"/>
+		<script src="/static/codemirror-5.19.0/lib/codemirror.js"></script>
+		<script src="/static/codemirror-5.19.0/mode/javascript/javascript.js"></script>
+		<script src="/static/codemirror-5.19.0/mode/shell/shell.js"></script>
+		<script src="/static/jquery/jquery-1.12.3.js"></script>
+<!--		<script src="/static/layer/layer.js"></script>-->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+		<script src="/static/jquery-ui-1.12.1/jquery-ui.js"></script>
+<!--		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>-->
+  <style>
+  .ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  </style>
+    </head>
+	<body>
+        <div style="float:left;width:60%;height:100%;">
+			<div class="form-group" style="height:30px;">
+				<div style="float:left;margin-right: 10px;">
+					<label>脚本类型:</label>
+				</div>
+				<div style="float:left;margin-right: 10px;">
+					<input name="script_type" type="radio" value="sh" checked/>shell
+				</div>
+				<div style="float:left;margin-right: 10px;">
+					<input name="script_type" type="radio" value="py"/>python
+				</div>
+			</div>
+			<div class="form-group" style="height:30px;">
+				<div style="float:left;margin-right: 10px;">
+					<label>文件名:</label>
+				</div>
+				<div float="left" style="float:left;width:30%;">
+					<input id="file_name" name="file_name" class="form-control btn_check" type="text" pattern="^[_a-zA-Z]{1,}[_a-zA-Z0-9]{0,}" />
+				</div>
+			</div>
+			<div class="form-group" style="height:30px;">
+				<div style="float:left;margin-right: 10px;">
+					<label>用户名:</label>
+				</div>
+				<div float="left" style="float:left;width:30%;">
+					<input id="user_name" name="user_name" class="form-control" type="text" value="{{ user.username }}" readonly />
+				</div>
+			</div>
+			<div class="form-group" style="height:30px;">
+				<div style="float:left;margin-right:10px;width:46px;">
+					<label>目标:</label>
+				</div>
+				<div float="left" style="float:left;width:30%;">
+					<input id="host_group" name="host_group" class="ipinput form-control btn_check" type="text" placeholder="(可选...)" disabled/>
+				</div>
+			</div>
+			<div class="form-group" style="height:30px;">
+				<div style="float:left;margin-right:10px;width:46px;">
+					<label>参数:</label>
+				</div>
+				<div float="left" style="float:left;width:30%;">
+					<input id="script_arg" name="script_arg" class="form-control" type="text" placeholder="(可选...)" disabled/>
+				</div>
+			</div>
+			<div class="form-group" style="height:30px;">
+				<label>脚本内容:</label>
+				<textarea id="script_txt" name="script_txt" class="form-control" row="10" style="margin-left: 58px;width:80%;"></textarea>
+				<div><button id="txt_submit" class="btn btn-success" style="margin-top: 10px;margin-left: 58px;">保存文件</button></div>
+                <div><button id="submit_run" class="btn btn-info" style="margin-top: 10px;margin-left: 58px;" disabled>保存并执行</button></div>
+                <div><button id="just_run" class="btn btn-default" style="margin-top: 10px;margin-left: 58px;" disabled>仅执行</button></div>
+			</div>
+        </div>
+        <div id="div_history" style="float:right;width:0px;height:100%;background-color:#F8F8F8;max-height:780px;overflow:hidden;">
+            <div id="log_table" class="bs-example bs-example-tabs">
+              <ul id="myTab2" class="nav nav-tabs" role="tablist">
+                <li id="tab1" role="presentation" class="active"><a>运行记录</a></li>
+                <li id="tab2" role="presentation"><a>修改记录</a></li>
+              </ul>
+              <div id="run_history" style="margin-top: 5px;margin-left: 5px;max-height:780px;overflow:hidden;">
+                <table class="table table-striped table-hover table-condensed" style="width:530px;">
+                  <tbody id="run_data">
+                  </tbody>
+                </table>
+					<div align="left">
+						<nav>
+							<ul id="rundata_page" class="pagination">
+								<li class="li_nav disabled"><a>&laquo;</a></li>
+                                <!--
+								<li><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">5</a></li>
+                                -->
+								<li class="li_nav disabled"><a>&raquo;</a></li>
+                                <input id="rundata_pagegroup" type="hidden" />
+                                <input id="rundata_pages" type="hidden" />
+							</ul>
+						</nav>
+					</div>
+              </div>
+              <div id="modify_history" style="margin-top: 5px;margin-left: 5px;display:none;max-height:780px;overflow:hidden">
+                <table class="table table-striped table-hover table-condensed" style="width:530px;">
+                  <tbody id="create_modify_data">
+                  </tbody>
+                </table>
+					<div align="left">
+						<nav>
+							<ul id="modifydata_page" class="pagination">
+								<li class="li_nav disabled"><a>&laquo;</a></li>
+                                <!--
+								<li><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">5</a></li>
+                                -->
+								<li class="li_nav disabled"><a>&raquo;</a></li>
+                                <input id="modifydata_pagegroup" type="hidden" />
+                                <input id="modifydata_pages" type="hidden" />
+							</ul>
+						</nav>
+					</div>
+              </div>
+            </div>
+            <div id="runlog_div" style="display:none;max-height:780px;">
+              <pre id="runlog_pre">
+              </pre>
+            </div>
+            <div id="return_button" style="display:none;">
+              <button type="button" class="btn btn-info glyphicon glyphicon-sort-by-attributes">&nbsp返回列表</button>
+            </div>
+        </div>
+        <div style="float:right;width:auto;height:auto;position:absolute;bottom:5px;right:5px;">
+            <button id="show_history" class="btn btn-primary">
+                <span class="glyphicon glyphicon-arrow-left">&nbsp </span>
+                <span>查看历史记录</span>
+            </button>
+        </div>
+        <input id="justrun_flag" type="hidden" value="0"/>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header" style="padding-bottom: 0px;border-bottom-width: 0px;">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <ul class="nav nav-tabs" role="tablist" id="myTab">
+                        <li role="presentation"><a>选取IP地址</a></li>
+                        <li role="presentation"><a>选取group</a><li>
+                    </ul>
+                </div>
+                <div class="modal-body" style="padding-top: 0px;padding-bottom: 0px;">
+            <!--		<input id="search_input" type="text" class="form-control" placeholder="请在此输入group名以便重复使用, 无则随机分配..."/> -->
+                    <table class="table table-striped" style="margin-bottom: 10px;">
+                        <tbody id="t_checkboxs"></tbody>
+                    </table>
+                    <div class="checkbox" style="height: 20px;margin-top: 0px;margin-bottom: 0px;">
+                        <div style="float:left;position: relative;margin-right: 30px;margin-left: 26px;"><input type="checkbox" class="all_check"/>全选</div>
+                        <div style="float:left;position: relative;"><input type="checkbox" class="v_all_check"/>反选</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary btn_confirm">确定</button>
+                </div>
+                <div class="modal-body 2" style="padding-top: 0px;padding-bottom: 0px;">
+                    <!--<table class="table table-striped" style="margin-bottom: 10px;">
+                        <tbody></tbody></table>-->
+                </div>
+                </div>
+            </div>
+        </div>
+        <!---->
+          
+        <!-- Modal 2 -->
+        <div class="modal fade" id="result_md" tabindex="-1" role="dialog" aria-labelledby="result_md_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="result_md_Label">执行结果</h4>
+            </div>
+            <div class="modal-body">
+                <pre  id="result_md_body">
+                </pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+            </div>
+            </div>
+        </div>
+        </div>
+	</body>
+	<script type="text/javascript">
+    $(document).ready(function(){
+      $('#username',parent.document).html('{{ user.username }}');
+      $('#projname',parent.document).html('{{ proj }}');
+        if ('{{ proj }}' == 'none'){
+          return false;
+        }
+        // autocomplate:
+        $.ajax({
+          url:'/get_script_names/',
+          success:function(arg){
+            var data = jQuery.parseJSON(arg);
+            data_new = new Array;
+            $(data).each(function(i,item){
+              data_new.push(item.slice(0,-3))
+            });
+            //alert(data);
+            $('#file_name').autocomplete({
+                source:data_new,
+            });
+          },
+          error:function(){
+            alert("异常!");
+          },
+        });
+    });
+    
+    // input: ul object, the total page numbers, current page group number;
+    // output: a page list, for example: << 6 7 8 9 >>
+    function generate_page_li_2(ul_obj,page_num,ul_page_group_num){
+        var li_first = ul_obj.children('li:first');
+        var li_last = ul_obj.children('li:last');
+        if(page_num == '0'){
+            return false;
+        }
+        if(ul_page_group_num != 1){
+            li_first.removeClass('disabled');
+        } else {
+            li_first.addClass('disabled');
+        }
+        ul_obj.find('li:not(:first):not(:last)').remove();
+        var page_num = Number(page_num);
+        //var li_last = $('#li_last');
+        var page_start_num = (ul_page_group_num-1)*5+1;
+        var page_end_num = (ul_page_group_num-1)*5+5;
+        for(i = page_start_num; i <= page_num && i <= page_end_num; i++){
+            li_last.before('<li><a>'+ i +'</a></li>');
+        };
+        var page_groups = Math.floor(page_num / 5);
+        var page_groups_remainder = page_num % 5;
+        if(page_groups_remainder > 0){
+            if(ul_page_group_num == (page_groups+1)){
+                li_last.addClass('disabled');
+            } else {
+                li_last.removeClass('disabled');
+            }
+        } else {
+            if(ul_page_group_num == page_groups){
+                li_last.addClass('disabled');
+            } else {
+                li_last.removeClass('disabled');
+            }
+        }
+    };
+    $('body').on('click','.tr_run_data',function(){
+        //alert($(this).html());
+        var run_log = $(this).children(':eq(3)').val();
+        $.ajax({
+            url:'/get_run_log/',
+            type:'get',
+            async:true,
+            data:{ run_log:run_log },
+            success:function(arg){
+                var obj = jQuery.parseJSON(arg);
+                var log_data = obj.log_data;
+                $('#runlog_pre').html(log_data);
+            },
+            error:function(){
+                alert("异常!");
+            },
+        });
+        $('#log_table').slideUp();
+        $('#runlog_div').slideDown();
+        $('#return_button').slideDown();
+    });
+    $('#return_button').click(function(){
+        $('#runlog_div').slideUp();
+        $(this).slideUp();
+        $('#log_table').slideDown();
+    });
+
+    function get_run_data(run_data_page){
+        //var return_data = ''
+        //var run_data_page = 1;
+        $.ajax({
+            url:'/get_run_data/',
+            type:'get',
+            async:false,
+            data:{ run_data_page:run_data_page, },
+            success:function(arg){
+                //return_data = arg;
+                var json_run_data = jQuery.parseJSON(arg);
+                $('#run_data').html('<tr>\
+                <th>时间</th>\
+                <th>脚本</th>\
+                <th>用户</th>\
+                <th>目标</th>\
+                <th>参数</th>\
+                <th>返回码</th>\
+                </tr>');
+                $(json_run_data.run_data).each(function(i,item){
+                    $('#run_data').append('<tr class="tr_run_data">\
+                    <td>' + item.run_time + '</td>\
+                    <td>' + item.script_name + '</td>\
+                    <td>' + item.run_user + '</td>\
+                    <input type="hidden" value="' + item.run_log + '"/>\
+                    <td>' + item.target + '</td>\
+                    <td>' + item.argments + '</td>\
+                    <td>' + item.status + '</td>\
+                    </tr>');
+                });
+                $('#rundata_pages').val(json_run_data.run_pages);
+            },
+            error:function(){
+                alert('get run log data异常!');
+            },
+        });
+        //return return_data;
+    }
+
+    function get_modify_data(modify_data_page){
+        //var return_data = ''
+        //var run_data_page = 1;
+        $.ajax({
+            url:'/get_modify_data/',
+            type:'get',
+            async:false,
+            data:{ modify_data_page:modify_data_page, },
+            success:function(arg){
+                //return_data = arg;
+                var json_modify_data = jQuery.parseJSON(arg);
+                $('#create_modify_data').html('<tr>\
+                <th>时间</th>\
+                <th>脚本</th>\
+                <th>用户</th>\
+                <th>操作</th>\
+                </tr>');
+                $(json_modify_data.log_data).each(function(i,item){
+                    if(item.flag == 'create'){
+                        $('#create_modify_data').append('<tr class="info">\
+                        <td>' + item.modify_time + '</td>\
+                        <td>' + item.script_name + '</td>\
+                        <td>' + item.modify_user + '</td>\
+                        <td>' + item.flag + '</td>\
+                        </tr>');
+                    } else {
+                        $('#create_modify_data').append('<tr>\
+                        <td>' + item.modify_time + '</td>\
+                        <td>' + item.script_name + '</td>\
+                        <td>' + item.modify_user + '</td>\
+                        <td>' + item.flag + '</td>\
+                        </tr>');
+                    }
+                });
+                $('#modifydata_pages').val(json_modify_data.log_pages);
+            },
+            error:function(){
+                alert('get modify log data异常!');
+            },
+        });
+        //return return_data;
+    }
+    
+    $('body').on('click','#rundata_page li:not(.active):not(:first):not(:last)',function(){
+        var run_data_page = $(this).children().html();
+        get_run_data(run_data_page);
+        $('#rundata_page .active').removeClass('active');
+        $(this).addClass('active');
+    });
+
+    $('body').on('click','#modifydata_page li:not(.active):not(:first):not(:last)',function(){
+        var modify_data_page = $(this).children().html();
+        get_modify_data(modify_data_page);
+        $('#modifydata_page .active').removeClass('active');
+        $(this).addClass('active');
+    });
+
+    $('#rundata_page li:last').click(function(){
+        if($(this).hasClass('disabled')){
+            return false;
+        }
+        var run_data_page = Number($('#rundata_page li:not(.li_nav) a:last').html()) + 1;
+        get_run_data(run_data_page);
+        var ul_run_obj = $('#rundata_page');
+        var run_pages = $('#rundata_pages').val();
+        var rundata_pagegroup = Number($('#rundata_pagegroup').val()) + 1;
+        $('#rundata_pagegroup').val(rundata_pagegroup);
+        generate_page_li_2(ul_run_obj,run_pages,rundata_pagegroup);
+        $('#rundata_page li:not(.li_nav):first').addClass('active');
+    });
+    $('#rundata_page li:first').click(function(){
+        if($(this).hasClass('disabled')){
+            return false;
+        }
+        var run_data_page = Number($('#rundata_page li:not(.li_nav) a:first').html()) - 1;
+        get_run_data(run_data_page);
+        var ul_run_obj = $('#rundata_page');
+        var run_pages = $('#rundata_pages').val();
+        var rundata_pagegroup = Number($('#rundata_pagegroup').val()) - 1;
+        $('#rundata_pagegroup').val(rundata_pagegroup);
+        generate_page_li_2(ul_run_obj,run_pages,rundata_pagegroup);
+        $('#rundata_page li:not(.li_nav):last').addClass('active');
+    });
+
+    $('#modifydata_page li:last').click(function(){
+        if($(this).hasClass('disabled')){
+            return false;
+        }
+        var modify_data_page = Number($('#modifydata_page li:not(.li_nav) a:last').html()) + 1;
+        get_modify_data(modify_data_page);
+        var ul_modify_obj = $('#modifydata_page');
+        var modify_pages = $('#modifydata_pages').val();
+        var modifydata_pagegroup = Number($('#modifydata_pagegroup').val()) + 1;
+        $('#modifydata_pagegroup').val(modifydata_pagegroup);
+        generate_page_li_2(ul_modify_obj,modify_pages,modifydata_pagegroup);
+        $('#modifydata_page li:not(.li_nav):first').addClass('active');
+    });
+    $('#modifydata_page li:first').click(function(){
+        if($(this).hasClass('disabled')){
+            return false;
+        }
+        var modify_data_page = Number($('#modifydata_page li:not(.li_nav) a:first').html()) - 1;
+        get_modify_data(modify_data_page);
+        var ul_modify_obj = $('#modifydata_page');
+        var modify_pages = $('#modifydata_pages').val();
+        var modifydata_pagegroup = Number($('#modifydata_pagegroup').val()) - 1;
+        $('#modifydata_pagegroup').val(modifydata_pagegroup);
+        generate_page_li_2(ul_modify_obj,modify_pages,modifydata_pagegroup);
+        $('#modifydata_page li:not(.li_nav):last').addClass('active');
+    });
+    
+    function get_run_data_frist_page(){
+        var run_data_page = 1;
+        get_run_data(run_data_page);
+        $('#rundata_pagegroup').val('1');
+        var ul_run_obj = $('#rundata_page');
+        var rundata_pagegroup = $('#rundata_pagegroup').val();
+        var run_pages = $('#rundata_pages').val();
+        generate_page_li_2(ul_run_obj,run_pages,rundata_pagegroup);
+        ul_run_obj.children('li:eq(1)').prop('class','active');
+    }
+    
+    function get_modify_data_first_page(){
+        var modify_data_page = 1;
+        get_modify_data(modify_data_page);
+        $('#modifydata_pagegroup').val('1');
+        var ul_modify_obj = $('#modifydata_page');
+        var modifydata_pagegroup = $('#modifydata_pagegroup').val();
+        var log_pages = $('#modifydata_pages').val();
+        generate_page_li_2(ul_modify_obj,log_pages,modifydata_pagegroup);
+        ul_modify_obj.children('li:eq(1)').prop('class','active');
+    }
+
+    $(document).ready(function(){
+        get_run_data_frist_page();
+        get_modify_data_first_page();
+    });
+    $('body').on('click','#show_history',function(){
+        $('#div_history').animate({'width':'40%'});
+        $(this).children('span:first').prop('class','glyphicon glyphicon-arrow-right');
+        $(this).children('span:last').html('收起历史记录');
+        $(this).prop('id','hide_history');
+    });
+//    $('#hide_history').click(function(){
+    $('body').on('click','#hide_history',function(){
+        $('#div_history').animate({'width':'0px'});
+        $(this).children('span:first').prop('class','glyphicon glyphicon-arrow-left');
+        $(this).children('span:last').html('查看历史记录');
+        $(this).prop('id','show_history');
+    });
+    
+    function tabfirstclick(){
+        $('#myTab2 a:first').tab('show');
+        $('#modify_history').css('display','none');
+        $('#run_history').css('display','block');
+    }
+    
+    function tablastclick(){
+        $('#myTab2 a:last').tab('show');
+        $('#run_history').css('display','none');
+        $('#modify_history').css('display','block');
+    }
+    
+    $('#myTab2 a:first').click(function(){
+        //$('#myTab2 a:last').tab('hide');
+        tabfirstclick();
+    });
+    $('#myTab2 a:last').click(function(){
+        //$('#myTab2 a:first').tab('hide');
+        tablastclick();
+    });
+    
+    function save_scripts(){
+		var file_name = $("#file_name").val();
+		var user_name = $("#user_name").val();
+		var file_type = $("input[name='script_type']:checked").val();
+		//var script_txt = $(".CodeMirror-code").text();
+		var script_txt = editor.getValue()
+		var reg = /^[_a-zA-Z]{1,}[_a-zA-Z0-9]{0,}$/;
+		if(!reg.test(file_name)){
+			alert("请输入正确的文件名...");
+			$("input[name='file_name']").val("").focus();
+			return false;
+		};
+		//if(file_name == ""){
+		//	alert("请输入文件名...")
+		//	$("input[name='file_name']").focus();
+		//	return false;
+		//}
+		$.ajax({
+			type: "post",
+			url: "/script_save/",
+			async: false,
+			data: {
+				file_name: file_name,
+				user_name: user_name,
+				file_type: file_type,
+				script_txt: script_txt,
+			},
+			success:function(arg) {
+				var obj = jQuery.parseJSON(arg);
+				//alert(obj.status);
+				if(obj.status == "2"){
+					alert("保存成功。")
+                    //if(obj.flag == 'create'){
+                    //    $('#create_modify_data').children(':eq(0)').after('<tr class="info">\
+                    //    <td>' + obj.modify_time + '</td>\
+                    //    <td>' + obj.script_name + '</td>\
+                    //    <td>' + obj.modify_user + '</td>\
+                    //    <td>' + obj.flag + '</td>\
+                    //    </tr>');
+                    //} else {
+                    //    $('#create_modify_data').children(':eq(0)').after('<tr>\
+                    //    <td>' + obj.modify_time + '</td>\
+                    //    <td>' + obj.script_name + '</td>\
+                    //    <td>' + obj.modify_user + '</td>\
+                    //    <td>' + obj.flag + '</td>\
+                    //    </tr>');
+                    //}
+                    get_modify_data_first_page();
+				} else {
+					alert("保存失败。")
+				}
+			},
+			error : function(arg) {
+				alert("异常！"); 
+			},
+		});
+    }
+    
+    function run_script(){
+        var group_name = $('#host_group').val();
+		var file_name = $("#file_name").val();
+		var user_name = $("#user_name").val();        
+        var script_arg = $('#script_arg').val();
+		var file_type = $("input[name='script_type']:checked").val();
+        $.ajax({
+			url: '/run_script/',
+			type: 'get',
+			async: true,
+			data: { 
+                file_name:file_name,
+                group_name:group_name,
+                user_name:user_name,
+                script_arg:script_arg,
+                file_type:file_type,
+            },
+            beforeSend: function(){
+                $('#loading_div',window.parent.document).prop('class','job_running');
+            },
+			success:function(arg){
+                if(arg == 'error'){
+                    alert('执行失败, 无权限!');
+                    return false;
+                }
+                var obj = jQuery.parseJSON(arg);
+                //var return_statu = obj.statu;
+                var return_result = obj.result;
+                //result_new = return_result.replace('\n','<br/>');
+                $('#result_md').modal({backdrop:'static'});
+                $('#result_md_Label').html('脚本：' + file_name);
+                $('#result_md_body').html(return_result);
+                //alert(typeof obj.run_log);
+                //$('#run_data').children(':eq(0)').after('<tr class="tr_run_data">\
+                //<td>' + obj.run_time + '</td>\
+                //<td>' + obj.script_name + '</td>\
+                //<td>' + obj.run_user + '</td>\
+                //<input type="hidden" value="' + obj.run_log + '"/>\
+                //<td>' + obj.target + '</td>\
+                //<td>' + obj.argments + '</td>\
+                //<td>' + obj.status + '</td>\
+                //</tr>');
+                get_run_data_frist_page();
+                tabfirstclick();
+            },
+			error:function(){
+                alert('与服务器通信出现问题...');
+            },
+            complete:function(){
+                $('#loading_div',window.parent.document).prop('class','');
+            },
+        });
+    }
+    
+    $('#just_run').click(function(){
+        run_script();
+        //$(this).prop('disabled',true);
+        //get_run_data_frist_page();
+        //tabfirstclick();
+    });
+    
+    $('#submit_run').click(function(){
+        save_scripts();
+        run_script();
+		$("input[name='file_name']").val("").focus();
+		//editor.setValue("");
+        $(this).prop('disabled',true);
+        $('#just_run').prop('disabled',true);
+        $('#host_group').val('');
+    });
+    
+    //codemirror
+	var editor = CodeMirror.fromTextArea(document.getElementById("script_txt"), {
+		lineNumbers: true,
+		styleActiveLine: true,
+		matchBrackets: true,
+		theme: "abcdef"
+	});
+
+	//$(document).ready(function(){
+        // 保存代码至服务器;
+		$("#txt_submit").click(function(){
+            save_scripts();
+			$("input[name='file_name']").val("").focus();
+			//editor.setValue("");
+            $('#submit_run').prop('disabled',true);
+            $('#just_run').prop('disabled',true);
+            $('#host_group').val('').prop('disabled',true);
+            $('#script_arg').val('').prop('disabled',true);
+            
+            //get_modify_data_first_page();
+            
+            tablastclick();
+		});
+        
+        // 询问是否加载已经存在的文件内容;
+		$("#file_name").blur(function(){
+			var file_name = $("#file_name").val();
+			var file_type = $("input[name='script_type']:checked").val();
+			$.ajax({
+				type: "post",
+				url: "/script_check/",
+				async: true,
+				data: {
+					file_name: file_name,
+					file_type: file_type,
+				},
+				success:function(arg){
+					var obj = jQuery.parseJSON(arg);
+                    //if(obj == 'none'){
+                    //    alert('root没有选择项目?!');
+                    //}
+					if(obj.status == "2"){
+						var cfm = window.confirm("文件已存在, 是否加载?");
+						//console.log(cfm);
+						if(cfm == true){
+							editor.setValue(obj.content);
+                            $('#justrun_flag').val('1');
+                            //$('#just_run').prop('disabled',false);
+						}
+					}
+				},
+				error: function(arg) {
+					alert("异常！");
+				},
+			});
+		});
+        document.getElementById('file_name').addEventListener("input", checkinput);
+        function checkinput(){
+            if($(this).val() != ''){
+                $('#host_group').prop('disabled',false);
+                $('#script_arg').prop('disabled',false);
+            } else {
+                $('#submit_run').prop('disabled',true);
+                $('#just_run').prop('disabled',true);
+                $('#host_group').prop('disabled',true);
+                $('#script_arg').prop('disabled',true);
+            }
+        }
+	//});
+	// 全局变量, 标识当前tab;
+	var tab_num = '';
+	// 全局变量, 保存html;
+	var ip_txt = '';
+	var group_txt = '';
+	// 全局变量, 标识modal的打开状态;
+	var modal_status = '';
+	
+	// 保存group至数据库;
+	function save_group(groupname, ip_list){
+		$.ajax({
+			url: '/update_group/',
+			type: 'post',
+			async: true,
+			data: {
+				newgroupname: groupname,
+				ip_check_list: ip_list,
+			},
+			success:function(arg){
+				if(tab_num=="2"){
+					if(arg == 'True'){
+						alert('创建成功!');
+						get_ip_group_html();
+						$("#t_checkboxs").html(group_txt);
+					}
+					if(arg == 'False'){
+						alert('创建失败, 请确保输入的group名没被使用过...')
+						return false;
+					}
+					if(arg == 'error'){
+						alert('创建失败, 无权限!')
+						return false;
+					}
+				}
+				if(tab_num=="1"){
+					if(arg == 'True'){
+						$('#myModal').modal('hide');
+					}
+					if(arg == 'False'){
+						alert('error01;')
+						return false;
+					}
+				}
+			},
+			error:function(){
+				alert("异常");
+			}
+		});
+	}
+	// 生成日期时间, 精度:毫秒;
+    function getnowtime() {
+        var nowtime = new Date();
+        var year = nowtime.getFullYear();
+        var month = padleft0(nowtime.getMonth() + 1);
+        var day = padleft0(nowtime.getDate());
+        var hour = padleft0(nowtime.getHours());
+        var minute = padleft0(nowtime.getMinutes());
+        var second = padleft0(nowtime.getSeconds());
+        var millisecond = nowtime.getMilliseconds(); millisecond = millisecond.toString().length == 1 ? "00" + millisecond : millisecond.toString().length == 2 ? "0" + millisecond : millisecond;
+        return year + month + day + hour + minute + second + millisecond;
+    }
+    // 补齐两位数, 用于生成日期时间;
+    function padleft0(obj) {
+        return obj.toString().replace(/^[0-9]{1}$/, "0" + obj);
+    }
+	// 选择IP, 生成随机group名, 并保存至数据库;
+	$('body').on('click','.btn_confirm',function(){
+		var group_check_list = '';
+		$('#t_checkboxs').find('input[type=checkbox]').each(function(){
+			if($(this).prop('checked')){
+				group_check_list = group_check_list + ',' + $(this).val();
+			}
+		});
+		if(tab_num == '1'){
+            if(group_check_list.length==0){
+                return false;
+            }
+			var groupname = getnowtime();
+			save_group(groupname,group_check_list);
+		}
+		if(tab_num == '2'){
+            if(group_check_list.length==0){
+                return false;
+            }
+			var groupname = group_check_list.substr(1);
+			$('#myModal').modal('hide');
+		}
+		input_var.val(groupname);
+        $('#submit_run').prop('disabled',false);
+        if($('#justrun_flag').val() == '1'){
+            $('#just_run').prop('disabled',false);
+        }
+	});
+
+	// 点击ipinput输入框触发事件打开modal;
+	$("body").on('mousedown','input.ipinput',function(e){
+        if(document.getElementById('host_group').hasAttribute('disabled')){
+            return false;
+        }
+		input_var = $(this);
+		$('#myModal').modal();
+	});	
+	
+	// 生成html;
+	function new_html(tmp_array){
+		var tmp_html = "";
+		$.each(tmp_array,function(i,item){
+			if(i%2 == 0){
+			tmp_html = tmp_html+'<tr><td><input type="checkbox" value="'+item+'" />'+item+'</td>';
+			}
+			if(i%2 == 1){
+			tmp_html = tmp_html+'<td><input type="checkbox" value="'+item+'" />'+item+'</td></tr>';
+			}
+		});
+		return tmp_html;
+	};
+	
+	// 获取ip和group名;
+	function get_ip_group_html(){
+		$.ajax({
+			url: '/get_servers_ip/',
+			type: 'get',
+			async: false,
+			success:function(arg){
+				var obj = jQuery.parseJSON(arg);
+				var ips = obj.ips.split(',');
+				var groups = obj.group.split(',');
+				ip_txt = new_html(ips);
+				ip_txt_bak = ip_txt;
+				group_txt = new_html(groups);
+			},
+		});
+	}
+	// 打开modal并获取数据;
+	$('#myModal').on('show.bs.modal', function (e) {
+		get_ip_group_html();
+		show_first_tab();
+		modal_status = '1';
+	});
+	// modal关闭时清除input的checked属性;
+	$('#myModal').on('hide.bs.modal', function (e) {
+		modal_status = '0';
+		tab_num = '';
+	});
+	// 点击group tab时的处理过程;
+	$('#myTab a:last').on('click', function(e){
+		if(tab_num == '2'){
+			return false;
+		}
+		tab_num = "2";
+		$(this).tab('show');
+		$("#t_checkboxs").html(group_txt);
+		$(".all_check").removeAttr("checked");
+		$(".v_all_check").removeAttr("checked");
+		$("#myModal .modal-footer").prepend('		<div style="width: 90px;float: left;"><button id="addgroupbutton" \
+		type="button" class="btn btn-info" style="width:90px;">添加group</button></div>');
+	});
+	// 点击ip tab时的处理过程;
+	$('#myTab a:first').on('click', function(){
+		show_first_tab();
+	});
+	// group tab隐藏时保存html数据;
+	$('#myTab a:last').on('hide.bs.tab',function(){
+		if(modal_status == '1'){
+			group_txt = $("#t_checkboxs").html();
+		}
+		$("#addgroupbutton").remove();
+		$("#noaddgroup").remove();
+	});
+	// ip tab隐藏时保存html数据;
+	$('#myTab a:first').on('hide.bs.tab',function(){
+		if(modal_status == '1'){
+			ip_txt = $("#t_checkboxs").html();
+		}
+	});
+	// ip tab处理函数;
+	function show_first_tab(){
+		if(tab_num == '1'){
+			return false;
+		}
+		tab_num = "1";
+		$('#myTab a:first').tab('show');
+		$("#t_checkboxs").html(ip_txt);
+		$(".all_check").removeAttr("checked");
+		$(".v_all_check").removeAttr("checked");
+		$(".modal-body.2").html("");
+	};
+	// checkbox状态切换; 使checkbox显示checked属性, 此非必要, 但是为了在切换tab时保留上一个tab的checkbox状态而添加;
+	$("body").on('click',"input[type=checkbox]:not(.all_check):not(.v_all_check)",function(e){
+		if($(this).attr("checked")){
+			$(this).removeAttr("checked");
+		} else {
+			$(this).attr("checked",true);
+		}
+	});
+	// 点击"添加group"展开;
+	$("body").on('click','#addgroupbutton',function(){
+		add_group_html(ip_txt_bak);
+		$(this).text("不添加").attr('id','noaddgroup');
+	});
+	// add group界面;
+	function add_group_html(ip_list){
+		ip_txt_2 = '<label style="margin-right: 10px;">组名: </label><input id="newgroupname" style="width:200px;"/><table id="addgrouptable" class="table table-striped" style="margin-bottom: 0px;margin-top: 10px;"><tbody>' + ip_list + '</tbody></table>		<div class="checkbox" style="height: 20px;margin-top: 0px;margin-bottom: 0px;">\
+			<div style="float:left;position: relative;margin-right: 30px;margin-left: 26px;"><input type="checkbox" class="all_check"/>全选</div>\
+			<div style="float:left;position: relative;"><input type="checkbox" class="v_all_check"/>反选</div>\
+		  <div class="div_left" id="search" align="right">\
+	<select id="ss_key">\
+		<option value="uuid">UUID</option>\
+		<option value="project">项目</option>\
+		<option value="location">地区</option>\
+		<option value="status">状态</option>\
+		<option value="inter_ip">内网IP</option>\
+		<option value="exter_ip">外网IP</option>\
+		<option value="srv_type">服务器类型</option>\
+		<option value="cpu">CPU</option>\
+		<option value="memory">内存G</option>\
+		<option value="disk_size">硬盘G</option>\
+		<option value="os_type">操作系统</option>\
+		<option value="used_times">使用次数</option>\
+		<option value="enter_time">录入时间</option>\
+		<option value="update_time">更新时间</option>\
+		<option value="subnet">子网</option>\
+	</select>\
+	<input id="ss_word" type="text"/>\
+	<button id="searchip" class="btn btn-default">搜索</button>\
+  </div>\
+</div>\
+<div style="padding-top: 10px;margin-bottom: 10px;"><button id="savegroup" class="btn btn-primary" style="width:60px;">保存</button></div>';
+		$(".modal-body.2").html(ip_txt_2);
+	};
+	// 搜索功能;
+	$('body').on('click','#searchip',function(){
+		var ss_key = $('#ss_key').val();
+		var ss_word = $('#ss_word').val();
+		$.ajax({
+			url: '/get_servers_ip/',
+			type: 'post',
+			async: true,
+			data: {
+				ss_key: ss_key,
+				ss_word: ss_word,
+			},
+			success:function(arg){
+				var obj = jQuery.parseJSON(arg);
+				var ips = obj.ips.split(',');
+				ip_txt_bak = new_html(ips);
+				add_group_html(ip_txt_bak);
+			},
+		});
+	});
+	// 保存group至ip_group表;
+	$('body').on('click','#savegroup',function(){
+		var newgroupname = $("#newgroupname").val();
+		var ip_check_list = "";
+		$('#addgrouptable').find('input[type=checkbox]').each(function(){
+			if($(this).prop('checked')){
+				ip_check_list = ip_check_list + "," + $(this).val();
+			}
+		});
+		var reg = /^[_a-zA-Z]{1,}[_a-zA-Z0-9]{0,}$/;
+		if(!reg.test(newgroupname)){
+			alert("请输入正确的group名...");
+			return false;
+		};
+		if(newgroupname=="" || ip_check_list == ""){
+			alert("请确保输入group名及选择了ip...");
+			return false;
+		}
+		save_group(newgroupname,ip_check_list);
+		$(".modal-body.2").html('');
+		$('#noaddgroup').text("添加group").attr('id','addgroupbutton');
+	});
+	// 点击"不添加"收起;
+	$('body').on('click','#noaddgroup',function(){
+		$(".modal-body.2").html('');
+		$(this).text("添加group").attr('id','addgroupbutton');
+	});
+	// 全选;
+	$("body").on('click','.all_check',function(e){
+		if($(this).attr("checked")){
+			$(this).removeAttr("checked");
+			$(this).parent().parent().prev().find("input[type=checkbox]").removeAttr("checked");
+		} else {
+			$(this).attr("checked",'');
+			$(this).parent().parent().prev().find("input[type=checkbox]").prop("checked",true);
+		}
+	});
+	// 反选;
+	$("body").on('click','.v_all_check',function(e){
+		if(!$(this).attr("checked")){
+			$(this).attr("checked",'');
+			$(this).parent().parent().prev().find("input[type=checkbox]").each(function(){
+				if($(this).prop("checked")){
+					$(this).prop("checked",false);
+				} else {
+					$(this).prop("checked",true);
+				}
+			});
+		} else {
+			$(this).removeAttr("checked");
+			$(this).parent().parent().prev().find("input[type=checkbox]").each(function(){
+				if($(this).prop("checked")){
+					$(this).prop("checked",false);
+				} else {
+					$(this).prop("checked",true);
+				}
+			});
+		}
+	});
+	</script>
+</html>

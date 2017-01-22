@@ -1,0 +1,293 @@
+﻿<html>
+<head>
+ {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+
+<script type="text/javascript">
+
+// 删除危险操作提示:
+function show_confirm()
+{
+var r=confirm("确定要删除吗?!");
+if (r==true)
+  {
+  //document.getElementById("form_id").action = "success.php";
+  //document.write(document.getElementById("delsrv").formaction);
+  //document.getElementById("form_id").submit()
+  //document.getElementById("delsrv").formaction;
+  //document.getElementById("delsrv").form.submit();
+  }
+else
+  {
+  window.event.returnValue = false;
+  }
+}
+</script>
+
+</head>
+<body>
+<table frame="box" style="table-layout:fixed;word-break:break-all" >
+  <tr>
+    <th>删</th>
+    <th>服务器<br/>角色</th>
+    <th>SALT<br/>ID</th>
+    <th>GAME服</th>
+    <th>SIP</th>
+    <th>SID</th>
+    <th>SDIR</th>
+    <th>SPORT</th>
+    <th>SBATTLE<br/>PORT</th>
+    <th>SBATTLE<br/>HTTP<br/>PORT</th>
+    <th>SCACHE<br/>PORT</th>
+    <th>SCACHE<br/>HTTP<br/>PORT</th>
+    <th>SLOG<br/>PORT</th>
+    <th>SLOG<br/>ARCHIVE<br/>TIME</th>
+    <th>SDB<br/>HOST</th>
+    <th>SDB<br/>PORT</th>
+    <th>SDB<br/>SLAVE<br/>HOST</th>
+    <th>SDB<br/>SLAVE<br/>PORT</th>
+    <th>SREDIS<br/>PORT</th>
+    <th>SOPEN<br/>TIME</th>
+    <th>提交</th>
+  </tr>
+  <tr>
+    <form>
+    <th>搜</th>
+	<th><select name="s_sr_rl" >
+		<option value="none">none</option>
+		{% for i in sr_filter_rl %}
+			{% if i == s_sr_rl %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_si" >
+		<option value="none">none</option>
+		{% for i in sr_filter_si %}
+			{% if i == s_sr_si %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_sn" >
+		<option value="none">none</option>
+		{% for i in sr_filter_sn %}
+			{% if i == s_sr_sn %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_ip" >
+		<option value="none">none</option>
+		{% for i in sr_filter_ip %}
+			{% if i == s_sr_ip %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_id" >
+		<option value="none">none</option>
+		{% for i in sr_filter_id %}
+			{% if i == s_sr_id %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_sd" >
+		<option value="none">none</option>
+		{% for i in sr_filter_sd %}
+			{% if i == s_sr_sd %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_sp" >
+		<option value="none">none</option>
+		{% for i in sr_filter_sp %}
+			{% if i == s_sr_sp %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_bp" >
+		<option value="none">none</option>
+		{% for i in sr_filter_bp %}
+			{% if i == s_sr_bp %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_bh" >
+		<option value="none">none</option>
+		{% for i in sr_filter_bh %}
+			{% if i == s_sr_bh %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_cp" >
+		<option value="none">none</option>
+		{% for i in sr_filter_cp %}
+			{% if i == s_sr_cp %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_ch" >
+		<option value="none">none</option>
+		{% for i in sr_filter_ch %}
+			{% if i == s_sr_ch %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_lp" >
+		<option value="none">none</option>
+		{% for i in sr_filter_lp %}
+			{% if i == s_sr_lp %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_at" >
+		<option value="none">none</option>
+		{% for i in sr_filter_at %}
+			{% if i == s_sr_at %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_db" >
+		<option value="none">none</option>
+		{% for i in sr_filter_db %}
+			{% if i == s_sr_db %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_dp" >
+		<option value="none">none</option>
+		{% for i in sr_filter_dp %}
+			{% if i == s_sr_dp %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_ds" >
+		<option value="none">none</option>
+		{% for i in sr_filter_ds %}
+			{% if i == s_sr_ds %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_ap" >
+		<option value="none">none</option>
+		{% for i in sr_filter_ap %}
+			{% if i == s_sr_ap %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_rp" >
+		<option value="none">none</option>
+		{% for i in sr_filter_rp %}
+			{% if i == s_sr_rp %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><select name="s_sr_ot" >
+		<option value="none">none</option>
+		{% for i in sr_filter_ot %}
+			{% if i == s_sr_ot %}
+				<option value="{{ i }}" selected="True">{{ i }}</option>
+			{% else %}
+				<option value="{{ i }}">{{ i }}</option>
+			{% endif %}
+		{% endfor %}
+	</select></th>
+	<th><input id="s_input" type="submit" value="执行" /></th>
+  </form>
+  </tr>
+  {% for i in srv_role_all_data %}
+    <tr>
+	<form id="{{ i.2 }}" action="/rvssrv_role/" method="POST" name="rvssrv_role">
+	<td><input onclick="show_confirm()" formaction="/delsrv_role/" formtarget="_self" type="submit" value="X" style="color:red;"/></td>
+    <td><input name="role" style="width:60px;border-style:none;" type="text" value="{{ i.0 }}" readonly="True" /></td>
+    <td><input name="salt_id" style="width:190px;border-style:none;" type="text" value="{{ i.1 }}" readonly="True" /></td>
+    <td><input name="srv_name" style="width:65px;border-style:none;" type="text" value="{{ i.2 }}" /></td>
+    <td><input name="sip" style="width:100px;border-style:none;" type="text" value="{{ i.3 }}" readonly="True" /></td>
+    <td><input name="sid" style="width:30px;border-style:none;" type="text" value="{{ i.4 }}" readonly="True" /></td>
+    <td><input name="sdir" style="width:180px;border-style:none;" type="text" value="{{ i.5 }}" readonly="True" /></td>
+    <td><input name="sport" style="width:50px;border-style:none;" type="text" value="{{ i.6 }}" readonly="True" /></td>
+    <td><input name="sbattle_port" style="width:50px;border-style:none;" type="text" value="{{ i.7 }}" readonly="True" /></td>
+    <td><input name="sbattle_http_port" style="width:60px;border-style:none;" type="text" value="{{ i.8 }}" readonly="True" /></td>
+    <td><input name="scache_port" style="width:50px;border-style:none;" type="text" value="{{ i.9 }}" readonly="True" /></td>
+    <td><input name="scache_http_port" style="width:50px;border-style:none;" type="text" value="{{ i.10 }}" readonly="True" /></td>
+    <td><input name="slog_port" style="width:50px;border-style:none;" type="text" value="{{ i.11 }}" readonly="True" /></td>
+    <td><input name="slog_archive_time" style="width:50px;border-style:none;" type="text" value="{{ i.12 }}" readonly="True" /></td>
+    <td><input name="sdb_host" style="width:100px;border-style:none;" type="text" value="{{ i.13 }}" /></td>
+    <td><input name="sdb_port" style="width:50px;border-style:none;" type="text" value="{{ i.14 }}" readonly="True" /></td>
+    <td><input name="sdb_slave_host" style="width:100px;border-style:none;" type="text" value="{{ i.15 }}" /></td>
+    <td><input name="sdb_slave_port" style="width:50px;border-style:none;" type="text" value="{{ i.16 }}" readonly="True" /></td>
+    <td><input name="sredis_port" style="width:50px;border-style:none;" type="text" value="{{ i.17 }}" readonly="True" /></td>
+    <td><input name="sopen_time" style="width:80px;border-style:none;" type="text" value="{{ i.18 }}" /></td>
+    <input name="pagen" type="hidden" value="{{ srv_role_all_data.number }}" />
+    <input name="pagel" type="hidden" value="{{ srv_role_all_data.paginator.num_pages }}" />
+	<td><input type="submit" /></td>
+	</form>
+	</tr>
+  {% endfor %}
+</table>
+	<pre>*注意：修改”GAME服“可以用于添加新纪录，如果修改后的”GAME服“与原有的”GAME服“冲突，原有的”GAME服“将被覆盖！*</pre>
+  <div class="div_right" id="pageview" align="center">
+    {% if srv_role_all_data.has_previous %}
+        <a href="?page={{ srv_role_all_data.previous_page_number }}">前一页</a>
+    {% endif %}
+	
+        第{{ srv_role_all_data.number }}页，共{{ srv_role_all_data.paginator.num_pages }}页。
+
+    {% if srv_role_all_data.has_next %}
+        <a href="?page={{ srv_role_all_data.next_page_number }}">下一页</a>
+    {% endif %}
+  </div>
+</body>
+</html>

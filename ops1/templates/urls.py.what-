@@ -1,0 +1,31 @@
+from django.conf.urls import patterns, include, url
+from ops1.views import index, addserver, addform, adddbserver, adddomain, rvsdomain, rvsinstance, rvsserver, delserver, delinstance, deldomain, nav, all_info
+
+# Uncomment the next two lines to enable the admin:
+# from django.contrib import admin
+# admin.autodiscover()
+
+urlpatterns = patterns('',
+    # Examples:
+    # url(r'^$', 'devops.views.home', name='home'),
+    # url(r'^devops/', include('devops.foo.urls')),
+
+    # Uncomment the admin/doc line below to enable admin documentation:
+    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+
+    # Uncomment the next line to enable the admin:
+    # url(r'^admin/', include(admin.site.urls)),
+    (r'^$',index),
+    (r'^addform/$',addform),
+    (r'^addserver/$',addserver),
+    (r'^adddbserver/$',adddbserver),
+    (r'^adddomain/$',adddomain),
+    (r'^rvsdomain/$',rvsdomain),
+    (r'^rvsinstance/$',rvsinstance),
+    (r'^rvsserver/$',rvsserver),
+    (r'^delserver/$',delserver),
+    (r'^delinstance/$',delinstance),
+    (r'^deldomain/$',deldomain),
+    (r'^nav/$',nav),
+    
+)

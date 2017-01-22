@@ -1,0 +1,375 @@
+﻿{% load myfilter %}
+<html>
+<head>
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+	<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+	<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<style type="text/css">
+	
+.tree {
+    min-height:20px;
+    padding:19px;
+    margin-bottom:20px;
+    background-color:#fbfbfb;
+    border:1px solid #999;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05)
+}
+.tree li {
+    list-style-type:none;
+    margin:0;
+    padding:10px 5px 0 5px;
+    position:relative
+}
+.tree li::before, .tree li::after {
+    content:'';
+    left:-20px;
+    position:absolute;
+    right:auto
+}
+.tree li::before {
+    border-left:1px solid #999;
+    bottom:50px;
+    height:100%;
+    top:0;
+    width:1px
+}
+.tree li::after {
+    border-top:1px solid #999;
+    height:20px;
+    top:25px;
+    width:25px
+}
+.tree li span {
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border:1px solid #999;
+    border-radius:5px;
+    display:inline-block;
+    padding:3px 8px;
+    text-decoration:none
+}
+.tree li.parent_li>span {
+    cursor:pointer
+}
+.tree>ul>li::before, .tree>ul>li::after {
+    border:0
+}
+.tree li:last-child::before {
+    height:30px
+}
+.tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
+    background:#eee;
+    border:1px solid #94a0b4;
+    color:#000
+}
+
+i {
+	cursor:pointer;
+}
+	
+	</style>
+	<script>
+	$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip(); 
+	});
+	
+function show_path(e){
+	var targ = e.target;
+	var org_path = targ.getAttribute("value")
+	var new_path = org_path.split(".").slice(2,-1).join(".")
+	var input_ele = document.getElementById('arg_cmd')
+	input_ele.setAttribute('value',new_path)
+	$('#myModal').modal('hide');
+}
+
+{% for i in tasks %}
+    function myrefresh{{ i.0|jobid_replace }}() {
+        //获取iframe对象
+        var iframe = document.getElementById('{{ i.0|jobid_replace }}frame');
+        //取得iframe的scr 并添加一个随机函数，欺骗浏览器，每次请求都是以个新的地址，解决缓存
+		var rdm = Math.random();
+        var scr = iframe.getAttribute('src').split("&",1) + '&_d=' + rdm;
+        //重新设置iframe的scr
+        iframe.setAttribute('src', scr);
+		
+		var log_iframe = document.getElementById('{{ i.5|txt_cut }}iframe');
+		var log_src = log_iframe.getAttribute('src').split("&",1) + '&_d=' + rdm;
+		log_iframe.setAttribute('src', log_src);
+		
+    }
+{% endfor %}
+      //setInterval('myrefresh()', 5000);
+      
+function select_change()  
+{  
+   var x = document.getElementById("tgt_mod");  
+   var y = document.getElementById("tgt_sel");  
+   y.options.length = 0;
+   if(x.selectedIndex == 0)  
+   {  
+    {% for i in m2 %}
+        y.options.add(new Option("{{ i }}", "{{ i }}")); 
+    {% endfor %}
+   }  
+  
+   if(x.selectedIndex == 1)  
+   {  
+    {% for i in ng %}
+        y.options.add(new Option("{{ i }}", "{{ i }}"));    
+    {% endfor %}
+   }  
+
+//   if(x.selectedIndex == 2)  
+//   {  
+//        y.options.add(new Option("*", "*"));    
+//   }  
+}
+
+$(function () {
+    $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+    $('.tree li.parent_li > span').on('click', function (e) {
+        var children = $(this).parent('li.parent_li').find(' > ul > li');
+        if (children.is(":visible")) {
+            children.hide('fast');
+            $(this).attr('title', 'Expand this branch').find(' > i').addClass("glyphicon-folder-close").removeClass("glyphicon-folder-open");
+        } else {
+            children.show('fast');
+            $(this).attr('title', 'Collapse this branch').find(' > i').addClass("glyphicon-folder-open").removeClass("glyphicon-folder-close");
+        }
+        e.stopPropagation();
+    });
+	
+});
+
+$(document).ready(function(){
+		$('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+		$('.tree li.parent_li > span').attr('title', 'Expand this branch').find(' > i').addClass("glyphicon-folder-close").removeClass("glyphicon-folder-open");
+		var children = $('.tree li.parent_li > span').parent('li.parent_li').find(' > ul > li');
+		children.hide('fast');
+		//e.stopPropagation();
+　　});
+
+	</script>
+</head>
+<body>
+	<div>
+	<h2>点击执行作业:</h2>
+	<div style="height:50px;">
+		<div style="float:left;width:auto;margin-right:10px;">
+		<form action="/update_sx/" method="POST">
+			<input type="submit" value="更新沙箱" class="btn btn-primary"/>
+		</form>
+		</div>
+		<div style="float:left;width:auto;margin-right:10px;">
+		<form action="/update_zs/" method="POST">
+			{% if process.0 == "0" %}
+				<div data-toggle="tooltip" data-placement="right" title="You must run '更新沙箱' at first;" style="width:100px;"><input type="submit" value="更新正式服" class="btn btn-primary disabled"/></div>
+			{% else %}
+				<input type="submit" value="更新正式服" class="btn btn-primary"/>
+			{% endif %}
+		</form>
+		</div>
+	</div>
+		<div>
+		<form action="/update_sh/" method="POST">
+			<input type="submit" value="更新审核" class="btn btn-primary"/>
+		</form>
+		</div>
+	</div>
+	<div style="height:110px;">
+		<h2>对指定服执行命令:</h2>
+		<div>
+			<form>
+			<div style="width:auto;float:left;">
+				<label for="tgt_mod">目标范围:</label>
+				<select class="form-control" id="tgt_mod" style="width:auto;" onChange="select_change()">
+				<option selected="selected">minion</option>
+				<option>nodegroup</option>
+				</select>
+			</div>
+			
+			<div style="width:auto;float:left;margin-right:10px;">
+				<label for="tgt_sel">target列表:</label>
+				<select class="form-control" id="tgt_sel" style="width:auto;">
+				{% for i in m2 %}
+				<option>{{ i }}</option>
+				{% endfor %}
+				</select>
+			</div>
+			<div style="width:auto;float:left;margin-right:10px;">
+				<h1>/</h1>
+			</div>
+			<div style="width:auto;float:left;margin-right:10px;">
+				<label for="salt_cmd">常用命令:</label>
+				<select class="form-control" id="salt_cmd" style="width:auto;">
+				<option>cmd.run</option>
+				<option>state.sls</option>
+				<option>saltutil.refresh_pillar</option>
+				</select>
+			</div>
+			
+			<div style="width:auto;float:left;margin-right:10px;">
+				<h1>/</h1>
+			</div>
+			
+			<div style="width:auto;float:left;">
+				<label for="arg_cmd">输入命令及参数或选择:</label>
+				<input id="arg_cmd" class="form-control"/>
+			</div>
+			<div style="width:auto;float:left;margin-right:10px;">
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" style="margin-top:24px;">
+  选择sls文件
+</button>
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">Modal title</h4>
+      </div>
+      <div class="modal-body">
+<!-- 
+	  <div class="tree well">
+	<ul>
+	<li><span><i onmousedown="show_path(event)" value=".salt._modules.sid.py" class="glyphicon glyphicon-file">sid.py</i></span></li>
+	<li><span><i onmousedown="show_path(event)" value=".salt._modules.pili.py" class="glyphicon glyphicon-file">pili.py</i></span></li>
+	<li><span><i onmousedown="show_path(event)" value=".salt._modules.deploy.py" class="glyphicon glyphicon-file">deploy.py</i></span></li>
+	<li><span><i onmousedown="show_path(event)" value=".salt._modules.test.py" class="glyphicon glyphicon-file">test.py</i></span></li>
+		</ul>
+
+	  </div>
+-->
+
+<div class="tree well">
+	{{ dir_html|safe }}
+</div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+			</div>
+			<div style="width:auto;float:left;margin-right:10px;">
+				<h1>/</h1>
+			</div>
+			<div style="width:auto;float:left;margin-right:10px;">
+				<input class="btn btn-primary" type="submit" value="执行" style="margin-top:24px;"/>
+			</div>
+
+				<!--
+				<label for="ng_sel">nodegroups列表:</label>
+				<select class="form-control" id="ng_sel" style="width:auto;">
+				{% for i in ng %}
+				<option>{{ i }}</option>
+				{% endfor %}
+				</select>-->
+			</form>
+		</div>
+	</div>
+	
+	<div>
+		<h2>任务状态:</h2>
+		<div>
+		<table class="table table-striped table-bordered table-hover">
+		<tr>
+			<th>任务ID</th>
+			<th>类别</th>
+			<th>用户</th>
+			<th>时间</th>
+			<th>目标主机</th>
+			<th>记录文件</th>
+			<th>保留字段</th>
+		</tr>
+		{% for i in tasks %}
+			<tr>
+			
+			<td>
+<div class="container" style="width:auto; height:auto;">
+  <!-- Trigger the modal with a button -->
+  <a href="#" data-toggle="modal" data-target="#{{ i.0 }}" onclick="myrefresh{{ i.0|jobid_replace }}()">{{ i.0 }}</a>
+  <!-- Modal -->
+  <div class="modal fade" id="{{ i.0 }}" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{{ i.0 }}</h4>
+        </div>
+        <div class="modal-body" style="width:auto; height:50px;">
+          <iframe id="{{ i.0|jobid_replace }}frame" src="/taskprocess/?taskid={{ i.0 }}" frameborder="0"></iframe> 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</div>
+		</td>
+		<td>{{ i.1 }}</td>
+		<td>{{ i.2 }}</td>
+		<td>{{ i.3 }}</td>
+		<td>{{ i.4 }}</td>
+		<!--<td>{{ i.5 }}</td>-->
+		<td>
+<div class="container" style="width:auto; height:auto;">
+  <!-- Trigger the modal with a button -->
+  <a href="#" data-toggle="modal" data-target="#{{ i.5|txt_cut }}" onclick="myrefresh{{ i.0|jobid_replace }}()">{{ i.5 }}</a>
+  <!-- Modal -->
+  <div class="modal fade" id="{{ i.5|txt_cut }}" role="dialog">
+    <div class="modal-dialog modal-lg" style="width:80%;">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{{ i.5 }}</h4>
+        </div>
+        <div class="modal-body"">
+          <iframe id="{{ i.5|txt_cut }}iframe" src="/viewlog/?logname={{ i.5 }}" frameborder="0" style="width:100%; height:600px;"></iframe> 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</div>
+		</td>
+		<td>{{ i.6 }}</td>
+		</tr>
+		{% endfor %}
+		</table>
+		</div>
+
+	</div>
+<nav>
+  <ul class="pagination">
+    <li class="disabled"><a href="#">&laquo;</a></li>
+    <li class="active"><a>1</a></li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="#">5</a></li>
+    <li><a href="#">&raquo;</a></li>
+  </ul>
+</nav>
+</body>
+</html>

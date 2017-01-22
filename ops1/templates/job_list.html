@@ -1,0 +1,525 @@
+﻿<html>
+	<head>
+	{% load staticfiles %}
+		<link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+		<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+		<script src="/static/jquery/jquery-1.12.3.js"></script>
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+		<script src={% static "js/bootstrap.js" %}></script>
+	</head>
+	<body>
+		<div style="height: 200px;">
+			<fieldset>
+				<legend>作业查询</legend>
+				<div style="height: 50px;">
+					<div style="float:left;width:60px;"><label class="control-label">作业名:</label></div>
+					<div style="float:left;width:300px;"><input id="input_jobname" type="text" class="form-control"/></div>
+				</div>
+				<div style="height: 50px;">
+					<div style="float:left;width:60px;"><label class="control-label">用户名:</label></div>
+					<div style="float:left;width:300px;"><input id="input_username" type="text" class="form-control"/></div>
+				</div>
+				<div style="margin-left: 170px;">
+					<button id="search_job" type="button" class="btn btn-primary">查询</button>
+				</div>
+			</fieldset>
+		</div>
+		<div>
+			<fieldset>
+				<legend>作业列表</legend>
+				<table class="table">
+					<tbody id="jobs_tbody">
+						<tr>
+							<th>作业</th>
+							<th>创建用户</th>
+							<th>步骤</th>
+							<th>脚本</th>
+							<th>操作</th>
+                            <th>运行记录</th>
+						</tr>
+					</tbody>
+				</table>
+					<div align="left">
+						<nav>
+							<ul id="joblist_page" class="pagination">
+								<li id="li_first" class="li_nav disabled"><a>&laquo;</a></li>
+                                <!--
+								<li><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">5</a></li>
+                                -->
+								<li id="li_last" class="li_nav disabled"><a>&raquo;</a></li>
+                                <input id="ul_job_name" type="hidden"/>
+                                <input id="ul_user_name" type="hidden"/>
+                                <input id="ul_page_group" type="hidden"/>
+                                <input id="ul_page_num" type="hidden"/>
+							</ul>
+						</nav>
+					</div>
+			</fieldset>
+		</div>
+        
+<!-- Modal -->
+<div class="modal fade" id="result_md" tabindex="-1" role="dialog" aria-labelledby="result_md_Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="result_md_Label">执行结果</h4>
+      </div>
+      <div class="modal-body">
+        <pre  id="result_md_body">
+        </pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2 -->
+<div class="modal fade" id="hsModal" tabindex="-1" role="dialog" aria-labelledby="hsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="hsModalLabel">运行记录</h4>
+      </div>
+      <div id="joblog_table" class="modal-body">
+        <div>
+          <table class="table table-striped table-hover table-condensed" style="margin-bottom: 0px;">
+            <tbody>
+              <tr>
+                <th style="width:48px;">序号</th>
+                <th style="width:200px;">时间</th>
+                <th style="width:120px;">返回码</th>
+                <th>执行用户</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="max-height:590px;overflow-y:auto;">
+          <table class="table table-striped table-hover table-condensed" style="margin-bottom: 0px;">
+            <tbody id="joblog_tboby">
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="joblog_content" style="max-height:651px;overflow-y:auto;display:none;">
+        <pre id="joblog_pre">
+        </pre>
+      </div>
+      <div id="joblog_footer" class="modal-footer">
+		<div id="div_ul" align="left" style="float:left;">
+			<nav>
+				<ul id="joblog_page" class="pagination" style="margin-top: 0px;margin-bottom: 0px;">
+					<li class="li_nav disabled"><a>&laquo;</a></li>
+                    <!--
+					<li><a href="#">1</a></li>
+					<li><a href="#">2</a></li>
+					<li><a href="#">3</a></li>
+					<li><a href="#">4</a></li>
+					<li><a href="#">5</a></li>
+                    -->
+					<li class="li_nav disabled"><a>&raquo;</a></li>
+                    <input id="joblog_pagegroup" type="hidden" />
+                    <input id="joblog_pages" type="hidden" />
+                    <input id="joblog_jobname" type="hidden" />
+				</ul>
+			</nav>
+		</div>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <div id="joblog_showlist" style="float:left;display:none;">
+          <button type="button" class="btn btn-info glyphicon glyphicon-sort-by-attributes">&nbsp返回列表</button>
+        </div>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+	<script type="text/javascript">
+    $(document).ready(function(){
+      $('#username',parent.document).html('{{ user.username }}');
+      $('#projname',parent.document).html('{{ proj }}');
+    });
+    // 生成分页按钮;
+    function run_job(job_name){
+        if( job_name.length > 0 ){
+            //alert("Done!");
+            var priv_flag = '';
+            $.ajax({
+				url: '/start_job/',
+				type: 'get',
+				async: true,
+				data: { job_name:job_name },
+                beforeSend: function(){
+                    $('#loading_div',window.parent.document).prop('class','job_running');
+                },
+				success:function(arg){
+                    if(arg == 'error'){
+                        priv_flag = arg;
+                        return false;
+                    }
+                    var obj = jQuery.parseJSON(arg);
+                    //var return_statu = obj.statu;
+                    var return_result = obj.result;
+                    //result_new = return_result.replace('\n','<br/>');
+                    $('#result_md').modal({backdrop:'static'});
+                    $('#result_md_Label').html('作业：' + job_name);
+                    $('#result_md_body').html(return_result);
+                    //var return_ok = obj.ok;
+                    //alert(return_ok);
+                    //if(return_ok == 'ok'){
+                    //    alert('作业已提交执行!');
+                    //} else {
+                    //    alert('作业未成功提交!');
+                    //}
+                    //alert(obj.task_id);
+                },
+				error:function(){
+                    alert('与服务器通信出现问题...');
+                },
+                complete:function(){
+                    $('#loading_div',window.parent.document).prop('class','');
+                },
+            });
+            if(priv_flag == 1){
+                alert('无权限!')
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    
+    $('#result_md').on('hidden.bs.modal', function(){
+        $('#result_md_Label').html('返回状态码：')
+        $('#result_md_body').html();
+    });
+    
+    // input: ul object, the total page numbers, current page group number;
+    // output: a page list, for example: << 6 7 8 9 >>
+    function generate_page_li_2(ul_obj,page_num,ul_page_group_num){
+        var li_first = ul_obj.children('li:first');
+        var li_last = ul_obj.children('li:last');
+        ul_obj.find('li:not(:first):not(:last)').remove();
+        if(page_num == '0'){
+            li_first.addClass('disabled');
+            li_last.addClass('disabled');
+            return false;
+        }
+        if(ul_page_group_num != 1){
+            li_first.removeClass('disabled');
+        } else {
+            li_first.addClass('disabled');
+        }
+        var page_num = Number(page_num);
+        //var li_last = $('#li_last');
+        var page_start_num = (ul_page_group_num-1)*5+1;
+        var page_end_num = (ul_page_group_num-1)*5+5;
+        for(i = page_start_num; i <= page_num && i <= page_end_num; i++){
+            li_last.before('<li><a>'+ i +'</a></li>');
+        };
+        var page_groups = Math.floor(page_num / 5);
+        var page_groups_remainder = page_num % 5;
+        if(page_groups_remainder > 0){
+            if(ul_page_group_num == (page_groups+1)){
+                li_last.addClass('disabled');
+            } else {
+                li_last.removeClass('disabled');
+            }
+        } else {
+            if(ul_page_group_num == page_groups){
+                li_last.addClass('disabled');
+            } else {
+                li_last.removeClass('disabled');
+            }
+        }
+    };
+    // 通过ajax获取数据;
+    function get_data(job_name,user_name,page_num){
+        var job_return = '';
+		$.ajax({
+			url: '/get_job/',
+			type: 'get',
+			async: false,
+			data: {
+				job_name:job_name,
+				user_name:user_name,
+                page_num:page_num,
+			},
+			success: function(arg){
+				var job_data = jQuery.parseJSON(arg);
+                job_return = job_data.pages;
+                priv = job_data.priv
+				$('#jobs_tbody').html('\
+						<tr>\
+							<th>作业</th>\
+							<th>创建用户</th>\
+							<th>步骤</th>\
+							<th>脚本</th>\
+							<th>操作</th>\
+							<th>运行记录</th>\
+						</tr>\
+				');
+				$(job_data.list).each(function(i,item){
+					var job_name_table = item.job_name;
+					var job_user = item.job_user;
+					var steps = item.steps
+					var scripts = item.scripts
+                    if(priv == 3){
+					$('#jobs_tbody').append('\
+						<tr>\
+							<td><a href="/run_job/?job_name_get=' + job_name_table + '">'+ job_name_table +'</a></td>\
+							<td>'+ job_user +'</td>\
+							<td>'+ steps +'</td>\
+							<td>'+ scripts +'</td>\
+							<td><button type="button" class="btn btn-default btn-runjob">执行</button>&nbsp<button type="button" class="btn btn-danger btn-deljob">删除</button></td>\
+                            <td><a class="get_job_history">运行记录</a></td>\
+						</tr>\
+					');
+                    } else if(priv == 1) {
+					$('#jobs_tbody').append('\
+						<tr>\
+							<td><p>'+ job_name_table +'</p></td>\
+							<td>'+ job_user +'</td>\
+							<td>'+ steps +'</td>\
+							<td>'+ scripts +'</td>\
+							<td><button type="button" class="btn btn-default btn-runjob" disabled>执行</button>&nbsp<button type="button" class="btn btn-danger btn-deljob" disabled>删除</button></td>\
+                            <td><a class="get_job_history">运行记录</a></td>\
+						</tr>\
+					');
+                    } else {
+					$('#jobs_tbody').append('\
+						<tr>\
+							<td><p>'+ job_name_table +'</p></td>\
+							<td>'+ job_user +'</td>\
+							<td>'+ steps +'</td>\
+							<td>'+ scripts +'</td>\
+							<td><button type="button" class="btn btn-default btn-runjob" >执行</button>&nbsp<button type="button" class="btn btn-danger btn-deljob" disabled>删除</button></td>\
+                            <td><a class="get_job_history">运行记录</a></td>\
+						</tr>\
+					');
+                    }
+				});
+			},
+		});
+        return job_return;
+    }
+    
+    function get_job_history(job_name,page_num){
+        $.ajax({
+            url:'/get_job_history/',
+            type:'get',
+            async:false,
+            data:{
+                job_name:job_name,
+                page_num:page_num,
+            },
+            success:function(arg){
+                obj = jQuery.parseJSON(arg);
+                //alert(obj.data.length);
+                $('#joblog_tboby').html('');
+                $(obj.data).each(function(i,item){
+                    $('#joblog_tboby').append('<tr id="joblog_row">\
+                    <td class="showhand">' + (i+1) + '</td>\
+                    <td class="showhand" style="width:200px;">' + item.run_time + '</td>\
+                    <input type="hidden" value="' + item.uuid + '"/>\
+                    <td class="showhand" style="width:120px;">' + item.code + '</td>\
+                    <td class="showhand">' + item.run_user + '</td>\
+                    </tr>');
+                });
+                $('#joblog_pages').val(obj.pages);
+            },
+            error:function(){
+                alert('get_job_history异常!');
+            },
+        });
+    }
+    
+    $('body').on('click','.get_job_history',function(){
+        //alert("ok");
+        $('#joblog_content').css('display','none');
+        $('#joblog_table').css('display','block');
+        $('#joblog_showlist').css('display','none');
+        $('#div_ul').css('display','block');
+        var job_name = $(this).parent().prevAll().last().children().html();
+        $('#joblog_jobname').val(job_name);
+        $('#hsModalLabel').html(job_name + ' 运行记录');
+        var page_num = 1;
+        get_job_history(job_name,page_num);
+        $('#joblog_pagegroup').val(1);
+        var ul_obj = $('#joblog_page');
+        var page_nums = $('#joblog_pages').val();
+        generate_page_li_2(ul_obj,page_nums,1);
+        $('#joblog_page li:not(.li_nav):first').addClass('active');
+        $('#hsModal').modal();
+    });
+    
+    $('body').on('click','#joblog_page li:not(.li_nav):not(.active)',function(){
+        var page_num = $(this).children('a').html();
+        var job_name = $('#joblog_jobname').val();
+        get_job_history(job_name,page_num);
+        $('#joblog_page .active').removeClass('active');
+        $(this).addClass('active');
+    });
+    
+    $('#joblog_page li:last').click(function(){
+        if($(this).hasClass('disabled')){
+            return false;
+        }
+        var page_num = Number($('#joblog_page li:not(.li_nav) a:last').html()) + 1;
+        var job_name = $('#joblog_jobname').val();
+        get_job_history(job_name,page_num);
+        var ul_obj = $('#joblog_page');
+        var page_nums = $('#joblog_pages').val();
+        var page_group = Number($('#joblog_pagegroup').val()) + 1;
+        $('#joblog_pagegroup').val(page_group);
+        generate_page_li_2(ul_obj,page_nums,page_group);
+        $('#joblog_page li:not(.li_nav):first').addClass('active');
+        //alert($(this).html());
+    });
+    $('#joblog_page li:first').click(function(){
+        if($(this).hasClass('disabled')){
+            return false;
+        }
+        var page_num = Number($('#joblog_page li:not(.li_nav) a:first').html()) - 1;
+        var job_name = $('#joblog_jobname').val();
+        get_job_history(job_name,page_num);
+        var ul_obj = $('#joblog_page');
+        var page_nums = $('#joblog_pages').val();
+        var page_group = Number($('#joblog_pagegroup').val()) - 1;
+        $('#joblog_pagegroup').val(page_group);
+        generate_page_li_2(ul_obj,page_nums,page_group);
+        $('#joblog_page li:not(.li_nav):last').addClass('active');
+        //alert($(this).html());
+    });
+    
+    $('body').on('click','#joblog_row',function(){
+        //alert($(this).children(':eq(2)').html());
+        var uuid = $(this).children(':eq(2)').val();
+        $.ajax({
+            url:'/get_jog_log/',
+            type:'get',
+            async: true,
+            data:{ uuid:uuid },
+            success:function(arg){
+                $('#joblog_pre').html(arg);
+            },
+            error:function(){
+                alert('异常!');
+            }
+        });
+        $('#joblog_table').slideUp();
+        $('#joblog_content').slideDown();
+        $('#joblog_showlist').css('display','block');
+        $('#div_ul').css('display','none');
+    });
+    
+    $('#joblog_showlist').click(function(){
+        $('#joblog_table').slideDown();
+        $('#joblog_content').slideUp();
+        $('#joblog_showlist').css('display','none');
+        $('#div_ul').css('display','block');
+    });
+    
+    $('body').on('click','.btn-runjob',function(){
+        if(!(confirm("你确定要执行吗?"))){
+            return false;
+        }
+        var job_name = $(this).parent().prevAll().last().children().html();
+        //alert(job_name);
+        run_job(job_name);
+    });
+    
+    $('body').on('click','.btn-deljob',function(){
+        if(!confirm('确定要删除吗?')){
+            return false;
+        }
+        var job_name = $(this).parent().prevAll().last().children().html();
+        var this_tr = $(this)
+        $.ajax({
+            url:'/delete_job/',
+            type:'get',
+            async: true,
+            data:{
+                job_name:job_name,
+            },
+            success:function(arg){
+                if(arg=='True'){
+                    this_tr.parent().parent().remove();
+                } else {
+                    alert("删除失败!");
+                }
+            },
+            error:function(){},
+        });
+    });
+    
+    // 往后翻5页按钮;
+    $('#joblist_page li:last').click(function(){
+        if($(this).hasClass('disabled')){
+            return false;
+        }
+		var job_name = $('#ul_job_name').val();
+		var user_name = $('#ul_user_name').val();
+        var old_ul_page_group_num = $('#ul_page_group').val();
+        var new_ul_page_group_num = Number(old_ul_page_group_num) + 1;
+        $('#ul_page_group').val(new_ul_page_group_num);
+        var page_num = $('#ul_page_num').val();
+        var current_page = Number($(this).prev().children().html()) + 1;
+        job_return = get_data(job_name,user_name,current_page);
+        var ul_obj = $('#joblist_page');
+        generate_page_li_2(ul_obj,page_num,new_ul_page_group_num);
+        $('#joblist_page li:first').next().addClass('active');
+    });
+    // 往前翻5页按钮;
+    $('#joblist_page li:first').click(function(){
+        if($(this).hasClass('disabled')){
+            return false;
+        }
+		var job_name = $('#ul_job_name').val();
+		var user_name = $('#ul_user_name').val();
+        var old_ul_page_group_num = $('#ul_page_group').val();
+        var new_ul_page_group_num = Number(old_ul_page_group_num) - 1;
+        $('#ul_page_group').val(new_ul_page_group_num);
+        var page_num = $('#ul_page_num').val();
+        var current_page = Number($(this).next().children().html()) - 1;
+        job_return = get_data(job_name,user_name,current_page);
+        var ul_obj = $('#joblist_page');
+        generate_page_li_2(ul_obj,page_num,new_ul_page_group_num);
+        $('#joblist_page li:last').prev().addClass('active');
+    });
+    // 对生成的分页按钮绑定click事件;
+    $('body').on('click','#joblist_page li:not(.active):not(.li_nav) a',function(){
+        var page_num = $(this).html();
+		var job_name = $('#ul_job_name').val();
+		var user_name = $('#ul_user_name').val();
+        job_return = get_data(job_name,user_name,page_num);
+        $('.active').removeClass('active');
+        $(this).parent().addClass('active');
+    });
+    // 查询job处理过程;
+	$('#search_job').click(function(){
+		var job_name = $('#input_jobname').val();
+		var user_name = $('#input_username').val();
+        var page_num = '1';
+        $('#ul_user_name').val(user_name);
+        $('#ul_job_name').val(job_name);
+        var ul_page_group_num=1;
+        job_return = get_data(job_name,user_name,page_num);
+        $('#ul_page_group').val(ul_page_group_num);
+        $('#ul_page_num').val(job_return);
+        var ul_obj = $('#joblist_page');
+        generate_page_li_2(ul_obj,job_return,ul_page_group_num);
+        $('#joblist_page li:first').next().addClass('active');
+	});
+	</script>
+	</body>
+</html>

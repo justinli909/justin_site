@@ -1,0 +1,245 @@
+<html>
+<head>
+ {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+
+<script type="text/javascript">
+
+// 删除危险操作提示:
+function show_confirm()
+{
+var r=confirm("确定要删除吗?!");
+if (r==true)
+  {
+  }
+else
+  {
+  window.event.returnValue = false;
+  }
+}
+</script>
+
+</head>
+<body>
+<div id="dt3" class="tbl1" align="center">
+<table id="t3" frame="box">
+
+<!-- 表头: -->
+<tr>
+  <th>删</th>
+  <th>域名</th>
+  <th>项目</th>
+  <th>地区</th>
+  <th>状态</th>
+  <th>记录类型</th>
+  <th>记录值</th>
+  <th>录入时间</th>
+  <th>更新时间</th>
+  <th>Submit</th>
+</tr>
+
+<!-- 过滤: -->
+<tr>
+	<form id="s_form" action="/showdomain/" method="GET">
+	<th>搜</th>
+	<th><select name="s_domain_name">
+	<option value="none">none</option>
+	{% for i in dm_filter_dn %}
+		{% if i == s_domain_name %}
+			<option value="{{ i }}" selected="True">{{ i }}</option>
+		{% else %}
+			<option value="{{ i }}">{{ i }}</option>
+		{% endif %}
+	{% endfor %}
+	</select></th>
+	<th><select name="s_project">
+	<option value="none">none</option>
+	{% for i in dm_filter_pj %}
+		{% if i == s_project %}
+			<option value="{{ i }}" selected="True">{{ i }}</option>
+		{% else %}
+			<option value="{{ i }}">{{ i }}</option>
+		{% endif %}
+	{% endfor %}
+	</select></th>
+	<th><select name="s_location">
+	<option value="none">none</option>
+	{% for i in dm_filter_lt %}
+		{% if i == s_location %}
+			<option value="{{ i }}" selected="True">{{ i }}</option>
+		{% else %}
+			<option value="{{ i }}">{{ i }}</option>
+		{% endif %}
+	{% endfor %}
+	</select></th>
+	<th><select name="s_status">
+	<option value="none">none</option>
+	{% if s_status == "on use" %}
+		<option value="on use" selected="True">on use</option>
+	{% else %}
+		<option value="on use">on use</option>
+	{% endif %}
+	{% if s_status == "not on use" %}
+		<option value="not on use" selected="True">not on use</option>
+	{% else %}
+		<option value="not on use">not on use</option>
+	{% endif %}
+	</select></th>
+	<th><select name="s_entrance_type">
+	<option value="none">none</option>
+	{% if s_entrance_type == "A" %}
+		<option value="A" selected="True">A记录</option>
+	{% else %}
+		<option value="A">A记录</option>
+	{% endif %}
+	{% if s_entrance_type == "CDN" %}
+		<option value="CDN" selected="True">CDN</option>
+	{% else %}
+		<option value="CDN">CDN</option>
+	{% endif %}
+	{% if s_entrance_type == "Email" %}
+		<option value="Email" selected="True">邮件</option>
+	{% else %}
+		<option value="Email">邮件</option>
+	{% endif %}
+	</select></th>
+	<th><select name="s_entrance_value">
+	<option value="none">none</option>
+	{% for i in dm_filter_ev %}
+		{% if i == s_entrance_value %}
+			<option value="{{ i }}" selected="True">{{ i }}</option>
+		{% else %}
+			<option value="{{ i }}">{{ i }}</option>
+		{% endif %}
+	{% endfor %}
+	</select></th>
+	<th><select name="s_enter_time">
+	<option value="none">none</option>
+	{% for i in dm_filter_et %}
+		{% if i|date:'Y-m-d' == s_enter_time %}
+			<option value="{{ i|date:'Y-m-d' }}" selected="True">{{ i|date:'Y-m-d' }}</option>
+		{% else %}
+			<option value="{{ i|date:'Y-m-d' }}">{{ i|date:'Y-m-d' }}</option>
+		{% endif %}
+	{% endfor %}
+	</select></th>
+	<th><select name="s_update_time">
+	<option value="none">none</option>
+	{% for i in dm_filter_ut %}
+		{% if i|date:'Y-m-d' == s_update_time %}
+			<option value="{{ i|date:'Y-m-d' }}" selected="True">{{ i|date:'Y-m-d' }}</option>
+		{% else %}
+			<option value="{{ i|date:'Y-m-d' }}">{{ i|date:'Y-m-d' }}</option>
+		{% endif %}
+	{% endfor %}
+	</select></th>
+	<th><input id="s_input" type="submit" value="执行" /></th>
+	</form>
+</tr>
+
+<!-- 主体: -->
+{% for i in dm_all_data %}
+    <tr>
+    <form id="{{ i.0 }}" action="/rvsdomain/" method="POST" name="rvsdomain">
+	<td><input onclick="show_confirm()" formaction="/deldomain/" formtarget="_self" type="submit" value="X" style="color:red;"></td>
+    <td><input name="domain_name" type="text" value="{{ i.0 }}" style="width:150px;border-style:none" /></td>
+    <td><input name="project" type="text" value="{{ i.1 }}" style="width:40px;border-style:none" /></td>
+    <td><input name="location" type="text" value="{{ i.2 }}" style="width:80px;border-style:none" /></td>
+    <td>
+    <select name="status">
+    {% if i.3 == 'on use' %}
+      <option value="on use" selected="true">on use</option>
+    {% else %}
+      <option value="on use">on use</option>
+    {% endif %}
+    {% if i.3 == 'not on use' %}
+      <option value="not on use" selected="true">not on use</option>
+    {% else %}
+      <option value="not on use">not on use</option>
+    {% endif %}
+    </select>
+    </td>
+    <td>
+    <select name="entrance_type">
+    {% if i.4 == 'A' %}
+      <option value="A" selected="true">A记录</option>
+    {% else %}
+      <option value="A" >A记录</option>
+    {% endif %}
+    {% if i.4 == 'CDN' %}
+      <option value="CDN" selected="true">CDN</option>
+    {% else %}
+      <option value="CDN">CDN</option>
+    {% endif %}
+    {% if i.4 == 'Email' %}
+      <option value="Email" selected="true">邮件</option>
+    {% else %}
+      <option value="Email">邮件</option>
+    {% endif %}
+    </select>
+    </td>
+    <td><input name="entrance_value" type="text" value="{{ i.5 }}" pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" style="width:100px;border-style:none" /></td>
+    <td><input name="enter_time" type="text" value="{{ i.6|date:'Y-m-d' }}" readonly="True" style="width:100px;border-style:none" /></td>
+    <td><input name="update_time" type="text" value="{{ i.7|date:'Y-m-d' }}" readonly="True" style="width:100px;border-style:none"/></td>
+    <input name="pagen" type="hidden" value="{{ dm_all_data.number }}" />
+    <input name="pagel" type="hidden" value="{{ dm_all_data.paginator.num_pages }}" />
+    <input name="s_domain_name" type="hidden" value="{{ s_domain_name }}" />
+    <input name="s_project" type="hidden" value="{{ s_project }}" />
+    <input name="s_location" type="hidden" value="{{ s_location }}" />
+    <input name="s_status" type="hidden" value="{{ s_status }}" />
+    <input name="s_entrance_type" type="hidden" value="{{ s_entrance_type }}" />
+    <input name="s_entrance_value" type="hidden" value="{{ s_entrance_value }}" />
+    <input name="s_enter_time" type="hidden" value="{{ s_enter_time }}" />
+    <input name="s_update_time" type="hidden" value="{{ s_update_time }}" />
+    <input name="ss_key" type="hidden" value="{{ ss_key }}" />
+    <input name="ss_word" type="hidden" value="{{ ss_word }}" />
+    <td><input type="submit" /></td>
+    </tr>
+    </form>
+{% endfor %}
+</table>
+<div>
+  <div class="div_left2" id="note" align="left">
+	<pre>*注意：修改”域名“可以用于添加新纪录，如果修改后的”域名“与原有的”域名“冲突，原有的”域名“将被覆盖！*</pre>
+  </div>
+  <div class="div_right2" id="addform" align="right">
+	<a href="/addform/" target="_blank"><input type="button" value="添加记录"></a>
+  </div>
+</div>
+</div>
+<br/>
+<div>
+  <div class="div_left" id="search" align="left">
+<!-- 搜索: -->
+	<form name="ss_domain" action="/showdomain/" method='GET'>
+	<select name="ss_key">
+		<option value="0">域名</option>
+		<option value="1">项目</option>
+		<option value="2">地区</option>
+		<option value="3">状态</option>
+		<option value="4">记录类型</option>
+		<option value="5">记录值</option>
+		<option value="6">录入时间</option>
+		<option value="7">更新时间</option>
+	</select>
+	<input name="ss_word" type="text"/>
+	<input type="submit" value="搜索">
+	</form>
+  </div>
+<!-- 分页 -->
+  <div class="div_right" id="pageview" align="right">
+    {% if dm_all_data.has_previous %}
+        <a href="?page={{ dm_all_data.previous_page_number }}&s_domain_name={{ s_domain_name }}&s_project={{ s_project }}&s_location={{ s_location }}&s_status={{ s_status }}&s_entrance_type={{ s_entrance_type }}&s_entrance_value={{ s_entrance_value }}&s_enter_time={{ s_enter_time }}&s_update_time={{ s_update_time }}&ss_key={{ ss_key }}&ss_word={{ ss_word }}">前一页</a>
+    {% endif %}
+	
+        第{{ dm_all_data.number }}页，共{{ dm_all_data.paginator.num_pages }}页。
+
+    {% if dm_all_data.has_next %}
+        <a href="?page={{ dm_all_data.next_page_number }}&s_domain_name={{ s_domain_name }}&s_project={{ s_project }}&s_location={{ s_location }}&s_status={{ s_status }}&s_entrance_type={{ s_entrance_type }}&s_entrance_value={{ s_entrance_value }}&s_enter_time={{ s_enter_time }}&s_update_time={{ s_update_time }}&ss_key={{ ss_key }}&ss_word={{ ss_word }}">下一页</a>
+    {% endif %}
+  </div>
+</div>
+<pre style="color:red;">待优化, 增加防止错改功能.</pre>
+</body>
+</html>

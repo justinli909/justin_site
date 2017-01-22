@@ -1,0 +1,88 @@
+﻿<html>
+  <head>
+	{% load staticfiles %}
+		<link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+		<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+		<script src="/static/jquery/jquery-1.12.3.js"></script>
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+		<script src={% static "js/bootstrap.js" %}></script>
+  </head>
+  <body>
+    <div style="width:400px;margin-top: 20px;margin-left: 20px;margin-right: 20px;margin-bottom: 20px;margin-top: 20%;margin-left: 35%;">
+      {% block content %}
+      
+        {% if form.errors %}
+          <p class="error">Sorry, that's not a valid username or password</p>
+        {% endif %}
+      
+      <form action="/login_view/" method="post">
+        <div  class="form-group" style="height:45px;">
+          <div style="width:20%;float:left;line-height:35px;text-align:right">
+            <label class="control-label">User name:</label>
+          </div>
+          <div style="width:70%;float:right;">
+            <input type="text" name="username" class="form-control" value="" id="username"/>
+          </div>
+        </div>
+        <div  class="form-group" style="height:45px;">
+          <div style="width:20%;float:left;line-height:35px;text-align:right">
+            <label class="control-label">Password:</label>
+          </div>
+          <div style="width:70%;float:right;">
+            <input type="password" name="password" value="" id="password" class="form-control"/>
+          </div>
+        </div>
+        <div  class="form-group" style="height:45px;">
+          <div style="width:20%;float:left;line-height:35px;text-align:right">
+            <label class="control-label">游戏项目:</label>
+          </div>
+          <div style="width:70%;float:right;">
+            <select id="s_gameproj" name="projname" class="form-control">
+                <option>==请选择游戏项目==</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-left: 123px;">
+          <input class="btn btn-primary" type="submit" value="login" />
+        </div>
+          <input type="hidden" name="next" value="{{ next|escape }}" />
+      </form>
+      
+      {% endblock %}
+      <!--
+        <div style="margin-left:123px;line-height:40px;">
+          <a href="/register/">注册</a>
+        </div>
+      <br/><p>关闭注册，请联系管理员添加账号。</p>
+      -->
+    </div>
+  <script type="text/javascript">
+  function get_proj_name(table_name){
+    var tmp_data = [];
+    $.ajax({
+      url:'/get_proj_name/',
+      type:'post',
+      async:false,
+      data:{table_name,table_name},
+      success:function(arg){
+        tmp_data = jQuery.parseJSON(arg);
+        //alert(tmp_data);
+      },
+      error:function(){
+        alert('异常!');
+      },
+    });
+    return tmp_data;
+  }
+  $(document).ready(function(){
+    var gameproj_data = get_proj_name('game_proj');
+    //alert(gameproj_data);
+    $(gameproj_data).each(function(i,item){
+      $('#s_gameproj').append('<option value="' + item + '">' + item + '</option>');
+    });
+  });
+  </script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+﻿<html>
+  <head>
+ {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://v3.bootcss.com/examples/dashboard/dashboard.css">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>骏梦运维</title>
+  </head>
+  <body>
+    <div id="loading_div">
+    </div>
+<!-- 首页框架显示导航页及添加资产信息页面. -->
+    <div class="navbar-fixed-top" style="border:1px solid #888888;background:#EEEEEE;height:51px;">
+        <p class="navbar-brand">骏梦运维</p>
+    <div style="float:right;line-height:50px;margin-right:20px;">
+        <p>Welcome, <a id="username">{{ user.username }}</a>@<a id="projname">{{ proj }}</a>, {% if root_flag == '1' %}<a id="rootadminport" href="/proj_admin/" target="_blank">管理</a>, {% endif %}<a href="/change_passwd/" target="_self">修改密码</a>, <a href="/logout/">注销</a></p>
+    </div>
+    </div>
+	<div class="container-fluid">
+	<div class="row">
+      <div class="col-sm-3 col-md-2 sidebar" style="padding-left: 0px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;">
+		<iframe name="d21fm" src="/nav/" frameborder="0" height="100%" width="100%"></iframe>
+      </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" style="height:100%;padding-left: 20px;padding-right: 20px;">
+	    <iframe name="d22fm" src="/homepage/" frameborder="0" height="100%" width="100%" style="min-width: 1276px;"></iframe>
+      </div>
+	</div>
+	</div>
+  </body>
+</html>

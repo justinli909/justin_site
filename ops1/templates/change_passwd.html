@@ -1,0 +1,65 @@
+﻿<html>
+  <head>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+    <script src="/static/jquery/jquery-1.12.3.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src={% static "js/bootstrap.js" %}></script>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+  </head>
+  <body>
+      <div style="float:left;min-width:300px;margin-left:20px;margin-top:25px;">
+        <label>修改密码:</label>
+        <input class="form-control" id="user_name" type="txt" value='{{ user_name }}' readonly/><br />
+        <input class="form-control" id="old_passwd" type="password" placeholder="请在此输入原密码;"/><br />
+        <input class="form-control" id="new_passwd" type="password" placeholder="请在此用户新密码;"/><br />
+        <input class="form-control" id="new_passwd_r" type="password" placeholder="请再次输入新密码;"/><br />
+        <button id="change_pssswd" class="btn btn-primary">提交</button>
+      </div>
+  </body>
+  <script type="text/javascript">
+    $('#change_pssswd').click(function(){
+      var user_name = $('#user_name').val();
+      var old_passwd = $('#old_passwd').val();
+      var new_passwd = $('#new_passwd').val();
+      var new_passwd_r = $('#new_passwd_r').val();
+      if(new_passwd != new_passwd_r){
+        alert('两次输入的新密码不一致!');
+        $('#new_passwd_r').focus();
+        return false;
+      }
+      $.ajax({
+        url:'/changepasswd/',
+        type:'post',
+        async:true,
+        data:{
+          user_name:user_name,
+          old_passwd:old_passwd,
+          new_passwd:new_passwd,
+          new_passwd_r:new_passwd_r,
+        },
+        success:function(arg){
+          if(arg=='True'){
+            alert('修改成功!');
+            location.href="/";
+          } else if(arg == 'invalid_new_passwd') {
+            alert('两次输入的新密码不一致!');
+            $('#new_passwd_r').focus();
+          } else if(arg == 'wrong_old_passwd') {
+            alert('原密码输入错误!');
+            $('#old_passwd').focus();
+          } else {
+            alert('修改失败!');
+          }
+        },
+        error:function(){
+          alert('异常!');
+        },
+      });
+    });
+  </script>
+</html>

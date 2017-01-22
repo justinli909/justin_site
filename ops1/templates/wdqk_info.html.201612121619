@@ -1,0 +1,29 @@
+<html>
+<head>
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+	<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+	<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	</script>
+</head>
+<body>
+	<div>
+		<form method="POST" action="/wdqk_add/">
+		<div style="float:left;width:auto;margin-right:10px;">
+			<select class="form-control" style="width:auto;" name="game_proj">
+				{% for i in proj %}
+				<option value="{{ i }}" >{{ i }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div style="float:left;width:auto;margin-right:10px;">
+			<input type="text" class="form-control" placeholder="请输入gameapps, 使用逗号分隔..." name="gameapps"/>
+		</div>
+		<div style="float:left;width:auto;">
+			<button class="btn btn-primary" type="submit">添加新服</button>
+		</div>
+		</form>
+	</div>
+</body>
+</html>

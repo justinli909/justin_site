@@ -1,0 +1,85 @@
+﻿{% load myfilter %}
+<html>
+<head>
+    {% load staticfiles %}
+      <link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+      <link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+      <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+      <script src="/static/jquery/jquery-1.12.3.js"></script>
+      <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+      <script src={% static "js/bootstrap.js" %}></script>
+</head>
+<body>
+	<div>{{ test_var }}</div>
+	<br />
+	<div class="dropdown">
+	<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+		Dropdown
+		<span class="caret"></span>
+	</button>
+	<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+		<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+		<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+		<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+		<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+	</ul>
+	</div>
+	<br />
+	<div>
+	<form>
+	<div class="form-group">
+		<label for="sel1">Select list (select one):</label>
+		<select class="form-control" id="sel1">
+		<option>1</option>
+		<option>2</option>
+		<option>3</option>
+		<option>4</option>
+		</select>
+		<br>
+		<label for="sel2">Mutiple select list (hold shift to select more than one):</label>
+		<select multiple class="form-control" id="sel2">
+		<option>1</option>
+		<option>2</option>
+		<option>3</option>
+		<option>4</option>
+		<option>5</option>
+		</select>
+	</div>
+	</form>
+	</div>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Collapsible Group Item #1
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          Collapsible Group Item #2
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+</script>
+</body>
+</html>

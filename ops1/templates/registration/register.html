@@ -1,0 +1,36 @@
+<html>
+  <head>
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+	<script src="/static/jquery/jquery-1.12.3.js"></script>
+	<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<script src={% static "js/bootstrap.js" %}></script>
+  </head>
+  <body>
+    <div style="margin-left:20px;">
+      <h1>Create an account</h1>
+      <form action="" method="post">
+        <div>
+          <label for="id_username">Username:</label>
+          <input id="id_username" type="text" name="username" maxlength="30" />
+          <span class="helptext">Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only.</span>
+        </div>
+        <div>
+          <label for="id_password1">Password:</label>
+          <input type="password" name="password1" id="id_password1" />
+        </div>
+        <div>
+          <label for="id_password2">Password confirmation:</label>
+          <input type="password" name="password2" id="id_password2" />
+          <span class="helptext">Enter the same password as above, for verification.</span>
+        </div>
+        <div>
+          <input type="submit" value="Create the account">
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

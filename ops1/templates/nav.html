@@ -1,0 +1,84 @@
+﻿<html>
+  <head>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+	<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+    <script src="/static/jquery/jquery-1.12.3.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src={% static "js/bootstrap.js" %}></script>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+  </head>
+  <body style="background-color:#333333;">
+    <div class="title_style nav">
+      <div class="glyphicon glyphicon-home" style="float:left;width:30px;line-height:45px;color:#BBBBBB;"></div>
+      <div class="nav_title">
+		<a class="nva_title_a" target="d22fm" href="/homepage/">首页</a>
+      </div>
+    </div>
+    <div class="title_style nav">
+      <div class="glyphicon glyphicon-list-alt" style="float:left;width:30px;line-height:45px;color:#BBBBBB;"></div>
+      <div class="glyphicon glyphicon-chevron-right" style="float:right;width:30px;line-height:45px;color:#BBBBBB;"></div>
+      <div class="nav_title">
+	  	<a class="nva_title_a">资产信息</a>
+      </div>
+      {% if priv == 3 %}
+      <div class="a_style nav"><a target="d22fm" href="/addform/">添加信息</a></div>
+      {% endif %}
+      <div class="a_style nav"><a target="d22fm" href="/showserver/">服务器</a></div>
+      <div class="a_style nav"><a target="d22fm" href="/showdb/">实例信息</a></div>
+      <!--
+      <div class="a_style nav"><a target="d22fm" href="/showdomain/">域名信息</a></div>
+      <div class="a_style nav"><a target="_blank" href="/showsrv_role/">游戏服信息</a></div>
+      <div class="a_style nav"><a target="d22fm" href="/wdqk_info/">武动乾坤</a></div> -->
+    </div>
+    <div class="title_style nav">
+      <div class="glyphicon glyphicon-tasks" style="float:left;width:30px;line-height:45px;color:#BBBBBB;"></div>
+      <div class="glyphicon glyphicon-chevron-right" style="float:right;width:30px;line-height:45px;color:#BBBBBB;"></div>
+      <div class="nav_title">
+	  	<a class="nva_title_a">执行作业</a>
+      </div>
+      {% if priv == 3 %}
+	  <div class="a_style nav"><a target="d22fm" href="/script_file/">快速脚本</a></div>
+	  <div class="a_style nav"><a target="d22fm" href="/run_job/">作业执行</a></div>
+	  <div class="a_style nav"><a target="d22fm" href="/job_list/">常见作业</a></div>
+	  <div class="a_style nav"><a target="d22fm" href="/timing_job/">定时作业</a></div>
+      {% else %}
+	  <div class="a_style nav"><a target="d22fm" href="/job_list/">常见作业</a></div>
+      {% endif %}
+      <!--
+	  <div class="a_style nav"><a target="_blank" href="https://10.10.30.207">SHELL</a></div>
+      -->
+    </div>
+  </body>
+  <script type="text/javascript">
+  // 高端被点击的a标签, 同时使其他同级a标签取消高亮;
+  $('.a_style').click(function(){
+    $(this).children('a').css('color','#FFFFFF');
+    $(this).siblings().filter('.a_style').children('a').css('color','');
+  });
+  // 展开当前菜单, 收起其他菜单;
+  $('.nav_title').click(function(){
+    $(this).nextAll().slideToggle();
+    if($(this).prev('.glyphicon.glyphicon-chevron-down').length > 0){
+      $(this).prev('.glyphicon.glyphicon-chevron-down').prop('class','glyphicon glyphicon-chevron-right');
+      $(this).children('a').css('color','');
+      $(this).parent().css('border-left-color','');
+      $(this).parent().css('background','');
+    } else {
+      $(this).prev('.glyphicon.glyphicon-chevron-right').prop('class','glyphicon glyphicon-chevron-down');
+      $(this).children('a').css('color','#FFFFFF');
+      $(this).parent().css('border-left-color','#4A9BFF');
+      $(this).parent().css('background','#111111');
+      $(this).siblings().filter('.a_style').children('a').css('color','');
+    }
+    $('.nav_title').not(this).nextAll().slideUp();
+    $('.nav_title').not(this).parent().css('border-left-color','');
+    $('.nav_title').not(this).parent().css('background','');
+    $('.nav_title').not(this).children('a').css('color','');
+    $('.nav_title').not(this).prev('.glyphicon.glyphicon-chevron-down').prop('class','glyphicon glyphicon-chevron-right');
+  });
+  </script>
+</html>

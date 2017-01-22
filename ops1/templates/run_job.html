@@ -1,0 +1,734 @@
+﻿<html>
+	<head>
+	{% load staticfiles %}
+		<link rel="stylesheet" type="text/css" href={% static "new.css" %} />
+		<link rel="stylesheet" href="http://v3.bootcss.com/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href={% static "common.css" %} />
+        <link rel="stylesheet" href="/static/jquery-ui-1.12.1/jquery-ui.css"/>
+		<script src="/static/jquery/jquery-1.12.3.js"></script>
+<!--		<script src="/static/layer/layer.js"></script>-->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+		<script src={% static "js/bootstrap.js" %}></script>
+<!--		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>-->
+        <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<script src="/static/jquery-ui-1.12.1/jquery-ui.js"></script>
+  <style>
+  .ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  </style>
+	</head>
+	<body>
+        <div>
+        </div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">作业属性</div>
+			<div class="panel-body">
+				作业名称
+				{% if job_dir.job_name %}
+					<input id="jobname" type="text" value="{{ job_dir.job_name }}" readonly/>
+					<input id="delflag" type="hidden" value="1">
+			</div>
+		</div>
+		<div id="joblist">
+		{%  for i in job_dir.step_id %}
+		<div class="panel panel-info">
+			<div class="panel-heading" style="height:50px;">
+				步骤名称
+				<input type="text" value="{{ i.step_name }}"/>
+				<div style="float:right"><a class="glyphicon glyphicon-remove"></a></div>
+				<div style="float:right;CUrsor: move"><a class="glyphicon glyphicon-move"></a></div>
+			</div>
+			<div class="panel-body">
+				<table class="table table-striped">
+					<tr class="tr_th">
+						<th>脚本名称</th>
+						<th>执行账户</th>
+						<th>服务器数</th>
+						<th>脚本参数</th>
+						<th>操作</th>
+					</tr>
+					{% for j in i.script_id %}
+					<tr class="trdata">
+						<td><input id="file_name" type="text" class="input form-control" value="{{ j.script_name }}"/></td>
+						<td><input type="text" class="form-control" value="{{ user.username }}" readonly /></td>
+						<td><input type="text" class="ipinput form-control" value="{{ j.server_group }}"/></td>
+						<td><input type="text" class="form-control" value="{{ j.arguments }}"/></td>
+						<td><a class="glyphicon glyphicon-minus-sign"></a></td>
+					</tr>
+					{% endfor %}
+				</table>
+				<a class="glyphicon glyphicon-plus-sign" id="newnode">新增节点</a>
+			</div>
+		</div>
+		{% endfor %}
+		</div>
+		<a class="glyphicon glyphicon-plus" id="newstep">新增步骤</a>
+		<div style="margin-top: 20px;">
+        {% if priv == 3 %}
+			<button id="save_all" type="button" class="btn btn-default">保存</button>
+        {% else %}
+            <button id="save_all" type="button" class="btn btn-default" disabled>保存</button>
+        {% endif %}
+				{% else %}
+					<input id="jobname" type="text"/>
+					<input id="delflag" type="hidden" value="0">
+			</div>
+		</div>
+		<div id="joblist">
+		<div class="panel panel-info">
+			<div class="panel-heading" style="height:50px;">
+				步骤名称
+				<input type="text"/>
+				<div style="float:right"><a class="glyphicon glyphicon-remove"></a></div>
+				<div style="float:right;CUrsor: move"><a class="glyphicon glyphicon-move"></a></div>
+			</div>
+			<div class="panel-body">
+				<table class="table table-striped">
+					<tr class="tr_th">
+						<th>脚本名称</th>
+						<th>执行账户</th>
+						<th>服务器数</th>
+						<th>脚本参数</th>
+						<th>操作</th>
+					</tr>
+					<tr class="trdata">
+						<td><input id="file_name" type="text" class="input form-control"/></td>
+						<td><input type="text" class="form-control" value="{{ user.username }}" readonly /></td>
+						<td><input type="text" class="ipinput form-control"/></td>
+						<td><input type="text" class="form-control"/></td>
+						<td><a class="glyphicon glyphicon-minus-sign"></a></td>
+					</tr>
+				</table>
+				<a class="glyphicon glyphicon-plus-sign" id="newnode">新增节点</a>
+			</div>
+		</div>
+		</div>
+		<a class="glyphicon glyphicon-plus" id="newstep">新增步骤</a>
+		<div style="margin-top: 20px;">
+        {% if priv == 3 %}
+			<button id="save_all" type="button" class="btn btn-default">保存</button>
+			<button id="save_all_run" type="button" class="btn btn-default">保存并执行</button>
+        {% else %}
+			<button id="save_all" type="button" class="btn btn-default" disabled>保存</button>
+			<button id="save_all_run" type="button" class="btn btn-default" disabled>保存并执行</button>
+        {% endif %}
+		</div>
+				{% endif %}
+<!---->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="padding-bottom: 0px;border-bottom-width: 0px;">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<ul class="nav nav-tabs" role="tablist" id="myTab">
+			<li role="presentation"><a>选取IP地址</a></li>
+			<li role="presentation"><a>选取group</a><li>
+		</ul>
+      </div>
+      <div class="modal-body" style="padding-top: 0px;padding-bottom: 0px;">
+<!--		<input id="search_input" type="text" class="form-control" placeholder="请在此输入group名以便重复使用, 无则随机分配..."/> -->
+		<table class="table table-striped" style="margin-bottom: 10px;">
+			<tbody id="t_checkboxs"></tbody>
+		</table>
+		<div class="checkbox" style="height: 20px;margin-top: 0px;margin-bottom: 0px;">
+			<div style="float:left;position: relative;margin-right: 30px;margin-left: 26px;"><input type="checkbox" class="all_check"/>全选</div>
+			<div style="float:left;position: relative;"><input type="checkbox" class="v_all_check"/>反选</div>
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary btn_confirm">确定</button>
+      </div>
+	  <div class="modal-body 2" style="padding-top: 0px;padding-bottom: 0px;">
+		<!--<table class="table table-striped" style="margin-bottom: 10px;">
+			<tbody></tbody></table>-->
+	  </div>
+    </div>
+  </div>
+</div>
+<!---->
+
+<!-- Modal 2 -->
+<div class="modal fade" id="result_md" tabindex="-1" role="dialog" aria-labelledby="result_md_Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="result_md_Label">执行结果</h4>
+      </div>
+      <div class="modal-body">
+        <pre  id="result_md_body">
+        </pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+	<script type="text/javascript">
+    $(document).ready(function(){
+      $('#username',parent.document).html('{{ user.username }}');
+      $('#projname',parent.document).html('{{ proj }}');
+        if ('{{ proj }}' == 'none'){
+          return false;
+        }        
+        // autocomplate:
+        $.ajax({
+          url:'/get_script_names/',
+          success:function(arg){
+            var data = jQuery.parseJSON(arg);
+            //alert(data);
+            $('#file_name').autocomplete({
+                source:data,
+            });
+          },
+          error:function(){
+            alert("异常!");
+          },
+        });
+    });
+    //$('#loading_test').click(function(){
+    //    $('#loading_div',window.parent.document).prop('class','job_running');
+    //});
+    // 为tbody绑定鼠标划过事件并使其子元素可被拖动;
+    $('body').on('mouseover','tbody',function() {
+      $(this).sortable({
+        revert: true,
+        items: 'tr:not(.tr_th)',
+    });
+    });
+    // 使joblist可被拖动;
+    $('#joblist').sortable({
+      revert: true
+    });
+    
+    function save_job(delflag){
+		var job_name = $('#jobname').val();
+		var reg = /^[_a-zA-Z]{1,}[_a-zA-Z0-9]{0,}$/;
+		if(!reg.test(job_name)){
+			alert("请输入正确的作业名...");
+            $('#jobname').focus();
+			return false;
+		};
+		var job_id = 1;
+		var job_user = 'bak_field';
+		var result = '';
+		$.ajax({
+			url: '/get_job_name/',
+			type: 'post',
+			async: false,
+			data: { 
+				job_name:job_name,
+				delflag:delflag,
+				},
+			success: function(arg){
+				result = arg;
+			},
+			error: function(){
+				alert("异常!");
+				return false;
+			},
+		});
+		if(result=='True'){
+			alert('作业名已存在, 请更换作业名...');
+			$('#jobname').focus();
+			return false;
+		}
+		$('#joblist').children().each(function(i,item){
+			var step_id = String(++i);
+			var step_name = $(this).find('.panel-heading input').val();
+            var return_arg = '';
+			$(this).children('.panel-body').find('.trdata').each(function(i,item){
+				var script_id = String(++i);
+				var script_name = $(this).find('input:eq(0)').val();
+				var script_user = $(this).find('input:eq(1)').val();
+				var server_group = $(this).find('input:eq(2)').val();
+				var scr_arguments = $(this).find('input:eq(3)').val();
+				//alert(job_id+","+job_name+","+job_user+","+step_id+","+step_name+","+script_id+","+script_name+","+script_user+","+server_group+","+scr_arguments);
+                $.ajax({
+					url: '/update_jobs/',
+					type: 'post',
+					async: false,
+					data: {
+						job_id:String(job_id),
+						job_name:job_name,
+						job_user:job_user,
+						step_id:step_id,
+						step_name:step_name,
+						script_id:script_id,
+						script_name:script_name,
+						script_user:script_user,
+						server_group:server_group,
+						scr_arguments:scr_arguments,
+					},
+					success:function(arg){
+                        return_arg = arg;
+					},
+					error:function(){
+						alert('与服务器通信出现问题...');
+						//return false;
+					}
+				});
+				if(return_arg=='False'){
+			        alert(script_name + '保存失败...');
+			        $(this).focus();
+					return false;
+				}
+                if(return_arg == 'error'){
+                  alert('操作失败, 无权限!');
+                  return false;
+                }
+				job_id++;
+			});
+		});
+		if(return_arg=='False'){
+			return false;
+		}
+        if(return_arg == 'error'){
+          return false;
+        }
+		alert('已保存至数据库;');
+		$('input[type=text]:not([readonly])').val('');
+        return job_name;
+    }
+    
+    function run_job(job_name,delflag){
+        if( job_name.length > 0 ){
+            //alert("Done!");
+            $.ajax({
+				url: '/start_job/',
+				type: 'get',
+				async: true,
+				data: { job_name:job_name },
+                beforeSend: function(){
+                    $('#loading_div',window.parent.document).prop('class','job_running');
+                },
+				success:function(arg){
+                    var obj = jQuery.parseJSON(arg);
+                    //var return_statu = obj.statu;
+                    var return_result = obj.result;
+                    //result_new = return_result.replace('\n','<br/>');
+                    $('#result_md').modal({backdrop:'static'});
+                    $('#result_md_Label').html('作业：' + job_name);
+                    $('#result_md_body').html(return_result);
+                    if(delflag=='1'){
+                        window.location = "/job_list/";
+                    }
+                    //var return_ok = obj.ok;
+                    //alert(return_ok);
+                    //if(return_ok == 'ok'){
+                    //    alert('作业已提交执行!');
+                    //} else {
+                    //    alert('作业未成功提交!');
+                    //}
+                },
+				error:function(){
+                    alert('与服务器通信出现问题...');
+                },
+                complete:function(){
+                    $('#loading_div',window.parent.document).prop('class','');
+                },
+            });
+        } else {
+            return false;
+        }
+    }
+    
+    $('#result_md').on('hidden.bs.modal', function(){
+        $('#result_md_Label').html('返回状态码：')
+        $('#result_md_body').html();
+    });
+    
+    // 保存作业步骤脚本信息至数据库;
+	$('#save_all').click(function(){
+		var delflag = $('#delflag').val();
+        save_job(delflag);
+		if(delflag=='1'){
+			window.location = "/job_list/";
+		}
+	});
+    
+    // backup, has not be used;
+	$('#save_all_run').click(function(){
+		var delflag = $('#delflag').val();
+        var job_name = save_job(delflag);
+        //alert(job_name);
+        run_job(job_name,delflag);
+	});
+
+	// document ready备份代码;
+	//$(document).ready(function(){
+	//});
+	
+	// JSON案例;
+	//var obj = jQuery.parseJSON('{"name":"John","test":{"a":"1"}}');  
+	//alert( obj.test.a);  
+    
+    // 为"+"绑定click事件, 点击其将追加步骤;
+	$("body").on('click',"a.glyphicon.glyphicon-plus",function(e){
+		$(this).prev().append('		<div class="panel panel-info">\
+			<div class="panel-heading" style="height:50px;">\
+				步骤名称\
+				<input type="text"/>\
+				<div style="float:right"><a class="glyphicon glyphicon-remove"></a></div>\
+				<div style="float:right;CUrsor: move"><a class="glyphicon glyphicon-move"></a></div>\
+			</div>\
+			<div class="panel-body">\
+				<table class="table table-striped">\
+					<tr class="tr_th">\
+						<th>脚本名称</th>\
+						<th>执行账户</th>\
+						<th>服务器数</th>\
+						<th>脚本参数</th>\
+						<th>操作</th>\
+					</tr>\
+					<tr class="trdata">\
+						<td><input type="text" class="input form-control" /></td>\
+						<td><input type="text" class="form-control" value="{{ user.username }}" readonly /></td>\
+						<td><input type="text" class="ipinput form-control" /></td>\
+						<td><input type="text" class="form-control"/></td>\
+						<td><a class="glyphicon glyphicon-minus-sign"></a></td>\
+					</tr>\
+				</table>\
+				<a class="glyphicon glyphicon-plus-sign">新增节点</a>\
+			</div>\
+		</div>');
+	});
+	
+	// 拖动功能备份代码;
+	//$("body").on("click","a.glyphicon.glyphicon-move",function(e){
+	//});
+	
+    // 为"添加节点"绑定click事件, 追加脚本;
+	$("body").on('click',"a.glyphicon.glyphicon-plus-sign",function(e){
+		$(this).prev().children("tbody").append('				<tr class="trdata">\
+						<td><input type="text" class="input form-control" /></td>\
+						<td><input type="text" class="form-control" value="{{ user.username }}" readonly /></td>\
+						<td><input type="text" class="ipinput form-control" /></td>\
+						<td><input type="text" class="form-control"/></td>\
+						<td><a class="glyphicon glyphicon-minus-sign"></a></td>\
+					</tr>');
+	});
+	$("body").on('click','a.glyphicon.glyphicon-minus-sign',function(e){
+		$(this).parent().parent().remove();
+	});
+	$("body").on('click','a.glyphicon.glyphicon-remove',function(e){
+		$(this).parent().parent().parent().remove();
+	});
+
+	// 全局变量, 标识当前tab;
+	var tab_num = '';
+	// 全局变量, 保存html;
+	var ip_txt = '';
+	var group_txt = '';
+	// 全局变量, 标识modal的打开状态;
+	var modal_status = '';
+	
+	// 保存group至数据库;
+	function save_group(groupname, ip_list){
+		$.ajax({
+			url: '/update_group/',
+			type: 'post',
+			async: true,
+			data: {
+				newgroupname: groupname,
+				ip_check_list: ip_list,
+			},
+			success:function(arg){
+				if(tab_num=="2"){
+					if(arg == 'True'){
+						alert('创建成功!');
+						get_ip_group_html();
+						$("#t_checkboxs").html(group_txt);
+					}
+					if(arg == 'False'){
+						alert('创建失败, 请确保输入的group名没被使用过...')
+						return false;
+					}
+					if(arg == 'error'){
+						alert('创建失败, 无权限!')
+						return false;
+					}
+				}
+				if(tab_num=="1"){
+					if(arg == 'True'){
+						$('#myModal').modal('hide');
+					}
+					if(arg == 'False'){
+						alert('error01;')
+						return false;
+					}
+				}
+			},
+			error:function(){
+				alert("异常");
+			}
+		});
+	}
+	// 生成日期时间, 精度:毫秒;
+    function getnowtime() {
+        var nowtime = new Date();
+        var year = nowtime.getFullYear();
+        var month = padleft0(nowtime.getMonth() + 1);
+        var day = padleft0(nowtime.getDate());
+        var hour = padleft0(nowtime.getHours());
+        var minute = padleft0(nowtime.getMinutes());
+        var second = padleft0(nowtime.getSeconds());
+        var millisecond = nowtime.getMilliseconds(); millisecond = millisecond.toString().length == 1 ? "00" + millisecond : millisecond.toString().length == 2 ? "0" + millisecond : millisecond;
+        return year + month + day + hour + minute + second + millisecond;
+    }
+    // 补齐两位数, 用于生成日期时间;
+    function padleft0(obj) {
+        return obj.toString().replace(/^[0-9]{1}$/, "0" + obj);
+    }
+	// 选择IP, 生成随机group名, 并保存至数据库;
+	$('body').on('click','.btn_confirm',function(){
+		var group_check_list = '';
+		$('#t_checkboxs').find('input[type=checkbox]').each(function(){
+			if($(this).prop('checked')){
+				group_check_list = group_check_list + ',' + $(this).val();
+			}
+		});
+		if(tab_num == '1'){
+            if(group_check_list.length==0){
+                return false;
+            }
+			var groupname = getnowtime();
+			save_group(groupname,group_check_list);
+		}
+		if(tab_num == '2'){
+            if(group_check_list.length==0){
+                return false;
+            }
+			var groupname = group_check_list.substr(1);
+			$('#myModal').modal('hide');
+		}
+		input_var.val(groupname);
+	});
+
+	// 点击ipinput输入框触发事件打开modal;
+	$("body").on('mousedown','input.ipinput',function(e){
+		input_var = $(this);
+		$('#myModal').modal();
+	});	
+	
+	// 生成html;
+	function new_html(tmp_array){
+		var tmp_html = "";
+		$.each(tmp_array,function(i,item){
+			if(i%2 == 0){
+			tmp_html = tmp_html+'<tr><td><input type="checkbox" value="'+item+'" />'+item+'</td>';
+			}
+			if(i%2 == 1){
+			tmp_html = tmp_html+'<td><input type="checkbox" value="'+item+'" />'+item+'</td></tr>';
+			}
+		});
+		return tmp_html;
+	};
+	
+	// 获取ip和group名;
+	function get_ip_group_html(){
+		$.ajax({
+			url: '/get_servers_ip/',
+			type: 'get',
+			async: false,
+			success:function(arg){
+				var obj = jQuery.parseJSON(arg);
+				var ips = obj.ips.split(',');
+				var groups = obj.group.split(',');
+				ip_txt = new_html(ips);
+				ip_txt_bak = ip_txt;
+				group_txt = new_html(groups);
+			},
+		});
+	}
+	// 打开modal并获取数据;
+	$('#myModal').on('show.bs.modal', function (e) {
+		get_ip_group_html();
+		show_first_tab();
+		modal_status = '1';
+	});
+	// modal关闭时清除input的checked属性;
+	$('#myModal').on('hide.bs.modal', function (e) {
+		modal_status = '0';
+		tab_num = '';
+	});
+	// 点击group tab时的处理过程;
+	$('#myTab a:last').on('click', function(e){
+		if(tab_num == '2'){
+			return false;
+		}
+		tab_num = "2";
+		$(this).tab('show');
+		$("#t_checkboxs").html(group_txt);
+		$(".all_check").removeAttr("checked");
+		$(".v_all_check").removeAttr("checked");
+		$("#myModal .modal-footer").prepend('		<div style="width: 90px;float: left;"><button id="addgroupbutton" \
+		type="button" class="btn btn-info" style="width:90px;">添加group</button></div>');
+	});
+	// 点击ip tab时的处理过程;
+	$('#myTab a:first').on('click', function(){
+		show_first_tab();
+	});
+	// group tab隐藏时保存html数据;
+	$('#myTab a:last').on('hide.bs.tab',function(){
+		if(modal_status == '1'){
+			group_txt = $("#t_checkboxs").html();
+		}
+		$("#addgroupbutton").remove();
+		$("#noaddgroup").remove();
+	});
+	// ip tab隐藏时保存html数据;
+	$('#myTab a:first').on('hide.bs.tab',function(){
+		if(modal_status == '1'){
+			ip_txt = $("#t_checkboxs").html();
+		}
+	});
+	// ip tab处理函数;
+	function show_first_tab(){
+		if(tab_num == '1'){
+			return false;
+		}
+		tab_num = "1";
+		$('#myTab a:first').tab('show');
+		$("#t_checkboxs").html(ip_txt);
+		$(".all_check").removeAttr("checked");
+		$(".v_all_check").removeAttr("checked");
+		$(".modal-body.2").html("");
+	};
+	// checkbox状态切换; 使checkbox显示checked属性, 此非必要, 但是为了在切换tab时保留上一个tab的checkbox状态而添加;
+	$("body").on('click',"input[type=checkbox]:not(.all_check):not(.v_all_check)",function(e){
+		if($(this).attr("checked")){
+			$(this).removeAttr("checked");
+		} else {
+			$(this).attr("checked",true);
+		}
+	});
+	// 点击"添加group"展开;
+	$("body").on('click','#addgroupbutton',function(){
+		add_group_html(ip_txt_bak);
+		$(this).text("不添加").attr('id','noaddgroup');
+	});
+	// add group界面;
+	function add_group_html(ip_list){
+		ip_txt_2 = '<label style="margin-right: 10px;">组名: </label><input id="newgroupname" style="width:200px;"/><table id="addgrouptable" class="table table-striped" style="margin-bottom: 0px;margin-top: 10px;"><tbody>' + ip_list + '</tbody></table>		<div class="checkbox" style="height: 20px;margin-top: 0px;margin-bottom: 0px;">\
+			<div style="float:left;position: relative;margin-right: 30px;margin-left: 26px;"><input type="checkbox" class="all_check"/>全选</div>\
+			<div style="float:left;position: relative;"><input type="checkbox" class="v_all_check"/>反选</div>\
+		  <div class="div_left" id="search" align="right">\
+	<select id="ss_key">\
+		<option value="uuid">UUID</option>\
+		<option value="project">项目</option>\
+		<option value="location">地区</option>\
+		<option value="status">状态</option>\
+		<option value="inter_ip">内网IP</option>\
+		<option value="exter_ip">外网IP</option>\
+		<option value="srv_type">服务器类型</option>\
+		<option value="cpu">CPU</option>\
+		<option value="memory">内存G</option>\
+		<option value="disk_size">硬盘G</option>\
+		<option value="os_type">操作系统</option>\
+		<option value="used_times">使用次数</option>\
+		<option value="enter_time">录入时间</option>\
+		<option value="update_time">更新时间</option>\
+		<option value="subnet">子网</option>\
+	</select>\
+	<input id="ss_word" type="text"/>\
+	<button id="searchip" class="btn btn-default">搜索</button>\
+  </div>\
+</div>\
+<div style="padding-top: 10px;margin-bottom: 10px;"><button id="savegroup" class="btn btn-primary" style="width:60px;">保存</button></div>';
+		$(".modal-body.2").html(ip_txt_2);
+	};
+	// 搜索功能;
+	$('body').on('click','#searchip',function(){
+		var ss_key = $('#ss_key').val();
+		var ss_word = $('#ss_word').val();
+		$.ajax({
+			url: '/get_servers_ip/',
+			type: 'post',
+			async: true,
+			data: {
+				ss_key: ss_key,
+				ss_word: ss_word,
+			},
+			success:function(arg){
+				var obj = jQuery.parseJSON(arg);
+				var ips = obj.ips.split(',');
+				ip_txt_bak = new_html(ips);
+				add_group_html(ip_txt_bak);
+			},
+		});
+	});
+	// 保存group至ip_group表;
+	$('body').on('click','#savegroup',function(){
+		var newgroupname = $("#newgroupname").val();
+		var ip_check_list = "";
+		$('#addgrouptable').find('input[type=checkbox]').each(function(){
+			if($(this).prop('checked')){
+				ip_check_list = ip_check_list + "," + $(this).val();
+			}
+		});
+		var reg = /^[_a-zA-Z]{1,}[_a-zA-Z0-9]{0,}$/;
+		if(!reg.test(newgroupname)){
+			alert("请输入正确的group名...");
+			return false;
+		};
+		if(newgroupname=="" || ip_check_list == ""){
+			alert("请确保输入group名及选择了ip...");
+			return false;
+		}
+		save_group(newgroupname,ip_check_list);
+		$(".modal-body.2").html('');
+		$('#noaddgroup').text("添加group").attr('id','addgroupbutton');
+	});
+	// 点击"不添加"收起;
+	$('body').on('click','#noaddgroup',function(){
+		$(".modal-body.2").html('');
+		$(this).text("添加group").attr('id','addgroupbutton');
+	});
+	// 全选;
+	$("body").on('click','.all_check',function(e){
+		if($(this).attr("checked")){
+			$(this).removeAttr("checked");
+			$(this).parent().parent().prev().find("input[type=checkbox]").removeAttr("checked");
+		} else {
+			$(this).attr("checked",'');
+			$(this).parent().parent().prev().find("input[type=checkbox]").prop("checked",true);
+		}
+	});
+	// 反选;
+	$("body").on('click','.v_all_check',function(e){
+		if(!$(this).attr("checked")){
+			$(this).attr("checked",'');
+			$(this).parent().parent().prev().find("input[type=checkbox]").each(function(){
+				if($(this).prop("checked")){
+					$(this).prop("checked",false);
+				} else {
+					$(this).prop("checked",true);
+				}
+			});
+		} else {
+			$(this).removeAttr("checked");
+			$(this).parent().parent().prev().find("input[type=checkbox]").each(function(){
+				if($(this).prop("checked")){
+					$(this).prop("checked",false);
+				} else {
+					$(this).prop("checked",true);
+				}
+			});
+		}
+	});
+	</script>
+	</body>
+</html>
